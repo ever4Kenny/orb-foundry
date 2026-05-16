@@ -36,18 +36,12 @@ func _load_json(path: String) -> Dictionary:
 	return {}
 
 func generate_pegs() -> void:
-	var board_width: float = layout.get("board_width", 720.0)
-	var board_height: float = layout.get("board_height", 1080.0)
 	var peg_radius: float = layout.get("peg_radius", 12.0)
-	var row_ratios: Array = layout.get("peg_rows", [])
-	var row_cols: Array = layout.get("peg_cols", [])
+	var peg_positions := _get_peg_positions()
 	var round_data := RoundManager.get_round_data()
 	var bonus_left: int = round_data.get("bonus_peg_count", 0)
 	var danger_left: int = round_data.get("danger_peg_count", 0)
-	var total_pegs := 0
-
-	for count in row_cols:
-		total_pegs += int(count)
+	var total_pegs := peg_positions.size()
 
 	var special_indices: Array[int] = []
 	for i in range(total_pegs):
@@ -59,6 +53,47 @@ func generate_pegs() -> void:
 	var danger_indices := special_indices.slice(danger_start, min(danger_start + danger_left, special_indices.size()))
 	var peg_index := 0
 
+	for position in peg_positions:
+		var peg := StaticBody2D.new()
+		peg.name = "Peg"
+		peg.set_script(PEG_SCRIPT)
+		peg.position = position
+		var peg_type := _pick_peg_type(peg_index, bonus_indices, danger_indices)
+		peg.set("peg_radius", peg_radius)
+		peg.set("peg_type", peg_type)
+		peg.set("peg_tags", _get_peg_tags(peg_type))
+		peg.add_to_group("pegs")
+		add_child(peg)
+		peg_nodes.append(peg)
+		peg_index += 1
+
+func _get_peg_positions() -> Array[Vector2]:
+	var patterns: Array = layout.get("patterns", [])
+	if patterns.is_empty():
+		return _get_grid_peg_positions()
+
+	var positions: Array[Vector2] = []
+	for pattern in patterns:
+		if not pattern is Dictionary:
+			continue
+		match str(pattern.get("type", "")):
+			"line":
+				positions.append_array(_get_line_positions(pattern))
+			"arc":
+				positions.append_array(_get_arc_positions(pattern))
+			"block":
+				positions.append_array(_get_block_positions(pattern))
+			"stagger":
+				positions.append_array(_get_stagger_positions(pattern))
+	return positions
+
+func _get_grid_peg_positions() -> Array[Vector2]:
+	var board_width: float = layout.get("board_width", 720.0)
+	var board_height: float = layout.get("board_height", 1080.0)
+	var row_ratios: Array = layout.get("peg_rows", [])
+	var row_cols: Array = layout.get("peg_cols", [])
+	var positions: Array[Vector2] = []
+
 	for row in range(min(row_ratios.size(), row_cols.size())):
 		var count := int(row_cols[row])
 		var y := board_height * float(row_ratios[row])
@@ -68,18 +103,83 @@ func generate_pegs() -> void:
 			stagger = spacing * 0.12
 
 		for col in range(count):
-			var peg := StaticBody2D.new()
-			peg.name = "Peg"
-			peg.set_script(PEG_SCRIPT)
-			peg.position = Vector2(spacing * float(col + 1) + stagger, y)
-			var peg_type := _pick_peg_type(peg_index, bonus_indices, danger_indices)
-			peg.set("peg_radius", peg_radius)
-			peg.set("peg_type", peg_type)
-			peg.set("peg_tags", _get_peg_tags(peg_type))
-			peg.add_to_group("pegs")
-			add_child(peg)
-			peg_nodes.append(peg)
-			peg_index += 1
+			positions.append(Vector2(spacing * float(col + 1) + stagger, y))
+	return positions
+
+func _get_line_positions(pattern: Dictionary) -> Array[Vector2]:
+	var count := int(pattern.get("count", 0))
+	var start := _pattern_point(pattern.get("start", [0.0, 0.0]))
+	var end := _pattern_point(pattern.get("end", [0.0, 0.0]))
+	var positions: Array[Vector2] = []
+
+	if count <= 1:
+		if count == 1:
+			positions.append(start)
+		return positions
+
+	for i in range(count):
+		positions.append(start.lerp(end, float(i) / float(count - 1)))
+	return positions
+
+func _get_arc_positions(pattern: Dictionary) -> Array[Vector2]:
+	var count := int(pattern.get("count", 0))
+	var center := _pattern_point(pattern.get("center", [0.5, 0.5]))
+	var radius := float(pattern.get("radius", 100.0))
+	var start_degrees := float(pattern.get("start_degrees", 0.0))
+	var end_degrees := float(pattern.get("end_degrees", 180.0))
+	var positions: Array[Vector2] = []
+
+	if count <= 1:
+		if count == 1:
+			positions.append(center + Vector2.RIGHT * radius)
+		return positions
+
+	for i in range(count):
+		var t := float(i) / float(count - 1)
+		var radians := deg_to_rad(lerpf(start_degrees, end_degrees, t))
+		positions.append(center + Vector2(cos(radians), sin(radians)) * radius)
+	return positions
+
+func _get_block_positions(pattern: Dictionary) -> Array[Vector2]:
+	var rows := int(pattern.get("rows", 0))
+	var cols := int(pattern.get("cols", 0))
+	var start := _pattern_point(pattern.get("start", [0.0, 0.0]))
+	var spacing_data: Array = pattern.get("spacing", [32.0, 32.0])
+	var spacing := Vector2(float(spacing_data[0]), float(spacing_data[1]))
+	var positions: Array[Vector2] = []
+
+	for row in range(rows):
+		for col in range(cols):
+			positions.append(start + Vector2(spacing.x * float(col), spacing.y * float(row)))
+	return positions
+
+func _get_stagger_positions(pattern: Dictionary) -> Array[Vector2]:
+	var board_width: float = layout.get("board_width", 720.0)
+	var board_height: float = layout.get("board_height", 1080.0)
+	var row_ratios: Array = pattern.get("rows", [])
+	var row_cols: Array = pattern.get("cols", [])
+	var x_min := board_width * float(pattern.get("x_min_ratio", 0.0))
+	var x_max := board_width * float(pattern.get("x_max_ratio", 1.0))
+	var positions: Array[Vector2] = []
+
+	for row in range(min(row_ratios.size(), row_cols.size())):
+		var count := int(row_cols[row])
+		var y := board_height * float(row_ratios[row])
+		var spacing := (x_max - x_min) / float(count + 1)
+		var stagger := 0.0
+		if row % 2 == 1:
+			stagger = spacing * 0.18
+
+		for col in range(count):
+			positions.append(Vector2(x_min + spacing * float(col + 1) + stagger, y))
+	return positions
+
+func _pattern_point(point_data: Variant) -> Vector2:
+	var board_width: float = layout.get("board_width", 720.0)
+	var board_height: float = layout.get("board_height", 1080.0)
+	if not point_data is Array or point_data.size() < 2:
+		return Vector2.ZERO
+	return Vector2(board_width * float(point_data[0]), board_height * float(point_data[1]))
 
 func _create_peg(position: Vector2, peg_type: String) -> Node:
 	var peg := StaticBody2D.new()

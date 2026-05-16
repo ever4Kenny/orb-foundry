@@ -4,6 +4,36 @@
   "peg_radius": 7,
   "peg_rows": [0.12, 0.18, 0.23, 0.29, 0.35, 0.41, 0.46, 0.52, 0.58, 0.64, 0.69, 0.75],
   "peg_cols": [8, 9, 8, 9, 8, 9, 8, 9, 8, 9, 8, 9],
+  "patterns": [
+    {
+      "type": "line",
+      "count": 18,
+      "start": [0.16, 0.11],
+      "end": [0.46, 0.47]
+    },
+    {
+      "type": "arc",
+      "count": 18,
+      "center": [0.62, 0.32],
+      "radius": 150,
+      "start_degrees": 25,
+      "end_degrees": 155
+    },
+    {
+      "type": "block",
+      "rows": 5,
+      "cols": 6,
+      "start": [0.13, 0.56],
+      "spacing": [32, 30]
+    },
+    {
+      "type": "stagger",
+      "rows": [0.53, 0.59, 0.65, 0.71, 0.77, 0.83],
+      "cols": [6, 6, 6, 6, 6, 6],
+      "x_min_ratio": 0.48,
+      "x_max_ratio": 0.91
+    }
+  ],
   "peg_types": {
     "normal": {
       "color": "#666666",
