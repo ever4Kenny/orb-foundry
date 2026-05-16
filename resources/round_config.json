@@ -3,7 +3,7 @@
     {
       "id": 1,
       "name": "第1轮",
-      "target_score": 80,
+      "target_score": 250,
       "ball_count": 4,
       "bonus_peg_count": 4,
       "danger_peg_count": 4
@@ -11,7 +11,7 @@
     {
       "id": 2,
       "name": "第2轮",
-      "target_score": 120,
+      "target_score": 400,
       "ball_count": 5,
       "bonus_peg_count": 4,
       "danger_peg_count": 5
@@ -19,7 +19,7 @@
     {
       "id": 3,
       "name": "第3轮",
-      "target_score": 160,
+      "target_score": 560,
       "ball_count": 6,
       "bonus_peg_count": 4,
       "danger_peg_count": 6
