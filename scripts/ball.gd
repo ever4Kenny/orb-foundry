@@ -10,6 +10,7 @@ enum BallEffect { NONE, PIERCE, MAGNET, SPLIT }
 
 const GRAVITY_SCALE := 0.55
 const MAX_SPEED := 560.0
+const NATURAL_DEATH_DURATION := 0.3
 
 @export var ball_id: String = "iron"
 @export var ball_radius: float = 20.0
@@ -26,10 +27,16 @@ const MAX_SPEED := 560.0
 @export var split_radius: float = 12.0
 
 var _alive: bool = true
+var _dying: bool = false
+var _death_progress: float = 0.0:
+	set(value):
+		_death_progress = value
+		queue_redraw()
 var _lifetime: float = 0.0
 var _stuck_timer: float = 0.0
 var _pierced_pegs: Array = []  # pegs already pierced (don't re-score)
 var _magnet_target_pos: Vector2 = Vector2.ZERO
+var _death_tween: Tween = null
 
 # Cache for ball config
 static var _ball_config_cache: Dictionary = {}
@@ -69,14 +76,17 @@ func _setup_visual() -> void:
 func _draw() -> void:
 	if not _alive:
 		return
-	draw_circle(Vector2.ZERO, ball_radius, color)
-	draw_arc(Vector2.ZERO, ball_radius, 0, TAU, 16, Color.BLACK, 1.0)
+	var visual_radius := ball_radius * lerpf(1.0, 0.2, _death_progress)
+	var visual_color := color.darkened(_death_progress * 0.65)
+	visual_color.a *= lerpf(1.0, 0.25, _death_progress)
+	draw_circle(Vector2.ZERO, visual_radius, visual_color)
+	draw_arc(Vector2.ZERO, visual_radius, 0, TAU, 16, Color.BLACK, 1.0)
 	
 	# Show collision count for glass ball
-	if ball_effect == BallEffect.SPLIT and split_threshold < 900:
+	if not _dying and ball_effect == BallEffect.SPLIT and split_threshold < 900:
 		draw_string(ThemeDB.fallback_font, Vector2(-4, 4), str(col_count), HORIZONTAL_ALIGNMENT_CENTER, -1, 8)
 
-	if ball_effect == BallEffect.MAGNET and _magnet_target_pos != Vector2.ZERO:
+	if not _dying and ball_effect == BallEffect.MAGNET and _magnet_target_pos != Vector2.ZERO:
 		var local_target := to_local(_magnet_target_pos)
 		var target_dir := local_target.normalized()
 		if target_dir != Vector2.ZERO:
@@ -92,7 +102,7 @@ func _draw() -> void:
 				draw_arc(Vector2.ZERO, ring_radius, start_angle, end_angle, 8, ring_color, 1.5)
 
 func _physics_process(delta: float) -> void:
-	if not _alive:
+	if not _alive or _dying:
 		return
 	
 	_lifetime += delta
@@ -103,7 +113,7 @@ func _physics_process(delta: float) -> void:
 	
 	# Lifetime cap (reduced from 12s for faster round turnover)
 	if _lifetime > 8.0:
-		die()
+		_die_naturally()
 		return
 	
 	# Speed cap
@@ -115,19 +125,19 @@ func _physics_process(delta: float) -> void:
 	if sp < 10.0:
 		_stuck_timer += delta
 		if _stuck_timer > 1.5:
-			die()
+			_die_naturally()
 			return
 	else:
 		_stuck_timer = 0.0
 	
 	# Stuck prevention: slow & near bottom
 	if sp < 20.0 and position.y > 900 and _lifetime > 2.0:
-		die()
+		_die_naturally()
 		return
 	
 	# Fallen below board — instant kill (board height 1080)
 	if position.y > 1100:
-		die()
+		_die_naturally()
 		return
 	
 	# Board edge bounce (board is 720×1080, ball in board-local coords)
@@ -236,6 +246,8 @@ func _create_split_ball(angle: float, speed: float) -> RigidBody2D:
 	return child
 
 func die() -> void:
+	if is_instance_valid(_death_tween):
+		_death_tween.kill()
 	_alive = false
 	# Signal parent to remove
 	if has_signal("tree_exiting"):
@@ -244,9 +256,25 @@ func die() -> void:
 		hide()
 		set_collision_layer_value(1, false)
 
+func _die_naturally() -> void:
+	if _dying:
+		return
+	_dying = true
+	_death_progress = 0.0
+	linear_velocity = Vector2.ZERO
+	angular_velocity = 0.0
+	freeze = true
+	collision_layer = 0
+	collision_mask = 0
+	_death_tween = create_tween()
+	_death_tween.tween_property(self, "_death_progress", 1.0, NATURAL_DEATH_DURATION)
+	_death_tween.finished.connect(die)
+
 func launch(velocity: Vector2) -> void:
 	linear_velocity = velocity
 	_alive = true
+	_dying = false
+	_death_progress = 0.0
 
 func is_alive() -> bool:
 	return _alive
