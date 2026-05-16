@@ -1,0 +1,56 @@
+{
+  "balls": [
+    {
+      "id": "iron",
+      "name": "铁球",
+      "desc": "重·穿透peg",
+      "color": "#666666",
+      "weight": 2.0,
+      "bounce": 0.3,
+      "radius": 20,
+      "tags": ["heavy", "metal"],
+      "effect": "pierce"
+    },
+    {
+      "id": "crystal",
+      "name": "水晶球",
+      "desc": "轻·高弹跳",
+      "color": "#dddddd",
+      "weight": 0.5,
+      "bounce": 0.9,
+      "radius": 20,
+      "tags": ["light", "crystal"],
+      "effect": "none"
+    },
+    {
+      "id": "magnet",
+      "name": "磁球",
+      "desc": "中·偏向奖励",
+      "color": "#4488ff",
+      "weight": 1.0,
+      "bounce": 0.6,
+      "radius": 20,
+      "tags": ["medium", "electric"],
+      "effect": "magnet",
+      "magnet_target_tag": "metal",
+      "magnet_range": 200.0,
+      "magnet_force": 300.0
+    },
+    {
+      "id": "glass",
+      "name": "玻璃球",
+      "desc": "中·撞6分裂",
+      "color": "#44dd66",
+      "weight": 1.0,
+      "bounce": 0.6,
+      "radius": 20,
+      "tags": ["medium", "glass", "split"],
+      "effect": "split",
+      "split_threshold": 6,
+      "split_radius": 12
+    }
+  ],
+  "initial_bag": ["iron", "iron", "crystal", "crystal", "magnet", "glass"],
+  "refill_balls": ["iron", "crystal", "magnet", "glass"],
+  "draw_count": 3
+}

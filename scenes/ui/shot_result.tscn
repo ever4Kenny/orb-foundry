@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://dmx66auyakh0k"]
+
+[ext_resource type="Script" path="res://scripts/ui/shot_result.gd" id="1_script"]
+
+[node name="ShotResult" type="CanvasLayer"]
+script = ExtResource("1_script")

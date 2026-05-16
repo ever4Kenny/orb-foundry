@@ -1,0 +1,28 @@
+{
+  "rounds": [
+    {
+      "id": 1,
+      "name": "第1轮",
+      "target_score": 80,
+      "ball_count": 4,
+      "bonus_peg_count": 4,
+      "danger_peg_count": 4
+    },
+    {
+      "id": 2,
+      "name": "第2轮",
+      "target_score": 120,
+      "ball_count": 5,
+      "bonus_peg_count": 4,
+      "danger_peg_count": 5
+    },
+    {
+      "id": 3,
+      "name": "第3轮",
+      "target_score": 160,
+      "ball_count": 6,
+      "bonus_peg_count": 4,
+      "danger_peg_count": 6
+    }
+  ]
+}

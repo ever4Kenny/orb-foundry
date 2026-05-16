@@ -1,0 +1,57 @@
+{
+  "board_width": 720,
+  "board_height": 1080,
+  "peg_radius": 12,
+  "peg_rows": [0.22, 0.28, 0.34, 0.40, 0.46, 0.52, 0.58, 0.64],
+  "peg_cols": [3, 4, 3, 5, 3, 4, 3, 5],
+  "peg_types": {
+    "normal": {
+      "color": "#666666",
+      "score": 10,
+      "disappear": true,
+      "tags": ["normal"]
+    },
+    "bonus": {
+      "color": "#ffaa00",
+      "score": 25,
+      "disappear": true,
+      "tags": ["bonus", "metal"]
+    },
+    "danger": {
+      "color": "#cc3333",
+      "score": -5,
+      "speed_penalty": 0.8,
+      "disappear": false,
+      "tags": ["danger"]
+    }
+  },
+  "slots": [
+    {
+      "position": "left",
+      "x_ratio": 0.15,
+      "y_offset": -160,
+      "width": 132,
+      "height": 32,
+      "effect": "elasticity_boost",
+      "label": "弹性+"
+    },
+    {
+      "position": "center",
+      "x_ratio": 0.50,
+      "y_offset": -160,
+      "width": 132,
+      "height": 32,
+      "effect": "score_bonus",
+      "label": "+10分"
+    },
+    {
+      "position": "right",
+      "x_ratio": 0.85,
+      "y_offset": -160,
+      "width": 132,
+      "height": 32,
+      "effect": "ball_recovery",
+      "label": "+1球"
+    }
+  ]
+}

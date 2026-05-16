@@ -1,0 +1,9 @@
+# Godot editor
+.godot/
+
+# Build artifacts
+Godot_v4.6-stable_linux.x86_64
+godot_linux.x86_64.zip
+
+# Shader cache
+.godot/shader_cache/

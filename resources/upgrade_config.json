@@ -1,0 +1,23 @@
+{
+  "upgrades": [
+    {
+      "id": "metal_coating",
+      "name": "金属镀层",
+      "desc": "盘面中部+4个奖励peg(金)",
+      "type": "add_pegs",
+      "peg_type": "bonus",
+      "count": 4,
+      "region": "center"
+    },
+    {
+      "id": "danger_clear",
+      "name": "危险清除",
+      "desc": "移除所有红色危险peg + 等量灰色peg",
+      "type": "remove_pegs",
+      "peg_type": "danger",
+      "also_remove": "normal",
+      "ratio": "1:1"
+    }
+  ],
+  "reward_balls": ["iron", "crystal", "glass"]
+}

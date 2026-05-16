@@ -1,0 +1,206 @@
+extends Node2D
+
+const LAYOUT_PATH := "res://resources/board_layouts/default.json"
+const PEG_SCRIPT := preload("res://scripts/peg.gd")
+const SLOT_SCRIPT := preload("res://scripts/slot.gd")
+
+var layout: Dictionary = {}
+var peg_nodes: Array[Node] = []
+var slot_nodes: Array[Node] = []
+
+func _ready() -> void:
+	randomize()
+	layout = _load_json(LAYOUT_PATH)
+	RoundManager.round_started.connect(_on_round_started)
+	RoundManager.upgrade_applied.connect(_on_upgrade_applied)
+	queue_redraw()
+	generate_pegs()
+	generate_slots()
+
+func _draw() -> void:
+	var board_width: float = layout.get("board_width", 720.0)
+	var board_height: float = layout.get("board_height", 1080.0)
+	var border_color := Color("#d8e3ff")
+	border_color.a = 0.85
+	draw_rect(Rect2(Vector2.ZERO, Vector2(board_width, board_height)), border_color, false, 4.0)
+
+func _load_json(path: String) -> Dictionary:
+	var file := FileAccess.open(path, FileAccess.READ)
+	if file == null:
+		push_error("Cannot open: " + path)
+		return {}
+	var data = JSON.parse_string(file.get_as_text())
+	file.close()
+	if data is Dictionary:
+		return data
+	return {}
+
+func generate_pegs() -> void:
+	var board_width: float = layout.get("board_width", 720.0)
+	var board_height: float = layout.get("board_height", 1080.0)
+	var peg_radius: float = layout.get("peg_radius", 12.0)
+	var row_ratios: Array = layout.get("peg_rows", [])
+	var row_cols: Array = layout.get("peg_cols", [])
+	var round_data := RoundManager.get_round_data()
+	var bonus_left: int = round_data.get("bonus_peg_count", 0)
+	var danger_left: int = round_data.get("danger_peg_count", 0)
+	var total_pegs := 0
+
+	for count in row_cols:
+		total_pegs += int(count)
+
+	var special_indices: Array[int] = []
+	for i in range(total_pegs):
+		special_indices.append(i)
+	special_indices.shuffle()
+
+	var bonus_indices := special_indices.slice(0, min(bonus_left, special_indices.size()))
+	var danger_start: int = bonus_indices.size()
+	var danger_indices := special_indices.slice(danger_start, min(danger_start + danger_left, special_indices.size()))
+	var peg_index := 0
+
+	for row in range(min(row_ratios.size(), row_cols.size())):
+		var count := int(row_cols[row])
+		var y := board_height * float(row_ratios[row])
+		var spacing := board_width / float(count + 1)
+		var stagger := 0.0
+		if row % 2 == 1:
+			stagger = spacing * 0.12
+
+		for col in range(count):
+			var peg := StaticBody2D.new()
+			peg.name = "Peg"
+			peg.set_script(PEG_SCRIPT)
+			peg.position = Vector2(spacing * float(col + 1) + stagger, y)
+			var peg_type := _pick_peg_type(peg_index, bonus_indices, danger_indices)
+			peg.set("peg_radius", peg_radius)
+			peg.set("peg_type", peg_type)
+			peg.set("peg_tags", _get_peg_tags(peg_type))
+			peg.add_to_group("pegs")
+			add_child(peg)
+			peg_nodes.append(peg)
+			peg_index += 1
+
+func _create_peg(position: Vector2, peg_type: String) -> Node:
+	var peg := StaticBody2D.new()
+	peg.name = "Peg"
+	peg.set_script(PEG_SCRIPT)
+	peg.position = position
+	peg.set("peg_radius", float(layout.get("peg_radius", 12.0)))
+	peg.set("peg_type", peg_type)
+	peg.set("peg_tags", _get_peg_tags(peg_type))
+	peg.add_to_group("pegs")
+	add_child(peg)
+	peg_nodes.append(peg)
+	return peg
+
+func _pick_peg_type(index: int, bonus_indices: Array, danger_indices: Array) -> String:
+	if index in bonus_indices:
+		return "bonus"
+	if index in danger_indices:
+		return "danger"
+	return "normal"
+
+func _get_peg_tags(peg_type: String) -> Array[String]:
+	var peg_types: Dictionary = layout.get("peg_types", {})
+	var data: Dictionary = peg_types.get(peg_type, {})
+	var tags: Array[String] = []
+	for tag in data.get("tags", [peg_type]):
+		tags.append(str(tag))
+	return tags
+
+func generate_slots() -> void:
+	var board_width: float = layout.get("board_width", 720.0)
+	var board_height: float = layout.get("board_height", 1080.0)
+	var slots: Array = layout.get("slots", [])
+
+	for slot_data in slots:
+		if not slot_data is Dictionary:
+			continue
+		var slot := Area2D.new()
+		slot.name = "Slot"
+		slot.set_script(SLOT_SCRIPT)
+		slot.position = Vector2(
+			board_width * float(slot_data.get("x_ratio", 0.5)),
+			board_height + float(slot_data.get("y_offset", -28.0))
+		)
+		slot.collision_layer = 8
+		slot.collision_mask = 1
+		# Add collision shape
+		var shape := RectangleShape2D.new()
+		shape.size = Vector2(
+			float(slot_data.get("width", 56)),
+			float(slot_data.get("height", 18))
+		)
+		var col := CollisionShape2D.new()
+		col.shape = shape
+		slot.add_child(col)
+		slot.set("slot_position", str(slot_data.get("position", "center")))
+		slot.set("slot_effect", str(slot_data.get("effect", "score_bonus")))
+		slot.set("slot_label", str(slot_data.get("label", "")))
+		add_child(slot)
+		slot_nodes.append(slot)
+
+func clear_board() -> void:
+	reset_pegs_for_round()
+
+func reset_pegs_for_round() -> void:
+	for peg in peg_nodes:
+		if is_instance_valid(peg):
+			peg.queue_free()
+	peg_nodes.clear()
+	generate_pegs()
+	if RoundManager.upgrade_chosen is Dictionary:
+		_on_upgrade_applied(RoundManager.upgrade_chosen)
+
+func get_peg_count() -> int:
+	var count := 0
+	for peg in peg_nodes:
+		if is_instance_valid(peg) and peg.alive:
+			count += 1
+	return count
+
+func _on_upgrade_applied(upgrade: Dictionary) -> void:
+	match str(upgrade.get("type", "")):
+		"add_pegs":
+			_add_upgrade_pegs(upgrade)
+		"remove_pegs":
+			_remove_upgrade_pegs(upgrade)
+
+func _on_round_started(_round_index: int, _round_data: Dictionary) -> void:
+	reset_pegs_for_round()
+
+func _add_upgrade_pegs(upgrade: Dictionary) -> void:
+	var count := int(upgrade.get("count", 0))
+	var peg_type := str(upgrade.get("peg_type", "bonus"))
+	var board_width: float = layout.get("board_width", 720.0)
+	var board_height: float = layout.get("board_height", 1080.0)
+	var positions := [
+		Vector2(board_width * 0.42, board_height * 0.43),
+		Vector2(board_width * 0.58, board_height * 0.43),
+		Vector2(board_width * 0.45, board_height * 0.50),
+		Vector2(board_width * 0.55, board_height * 0.50)
+	]
+
+	for i in range(min(count, positions.size())):
+		_create_peg(positions[i], peg_type)
+
+func _remove_upgrade_pegs(upgrade: Dictionary) -> void:
+	var target_type := str(upgrade.get("peg_type", "danger"))
+	var also_remove_type := str(upgrade.get("also_remove", ""))
+	var removed_count := _remove_pegs_by_type(target_type, -1)
+	if not also_remove_type.is_empty():
+		_remove_pegs_by_type(also_remove_type, removed_count)
+
+func _remove_pegs_by_type(peg_type: String, max_count: int) -> int:
+	var removed := 0
+	for peg in peg_nodes:
+		if max_count >= 0 and removed >= max_count:
+			break
+		if not is_instance_valid(peg) or not peg.alive:
+			continue
+		if str(peg.get("peg_type")) != peg_type:
+			continue
+		peg.die()
+		removed += 1
+	return removed

@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://blc7gdnl4xjk0"]
+
+[ext_resource type="Script" path="res://scripts/ui/ball_select.gd" id="1_ball_select"]
+
+[node name="BallSelect" type="CanvasLayer"]
+script = ExtResource("1_ball_select")
