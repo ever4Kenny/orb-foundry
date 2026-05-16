@@ -7,10 +7,12 @@ extends RigidBody2D
 signal split_created(child: RigidBody2D)
 
 enum BallEffect { NONE, PIERCE, MAGNET, SPLIT }
+enum DeathVisual { NATURAL, GAP }
 
 const GRAVITY_SCALE := 0.55
 const MAX_SPEED := 560.0
 const NATURAL_DEATH_DURATION := 0.3
+const GAP_DEATH_DURATION := 0.3
 
 @export var ball_id: String = "iron"
 @export var ball_radius: float = 20.0
@@ -37,6 +39,7 @@ var _stuck_timer: float = 0.0
 var _pierced_pegs: Array = []  # pegs already pierced (don't re-score)
 var _magnet_target_pos: Vector2 = Vector2.ZERO
 var _death_tween: Tween = null
+var _death_visual: int = DeathVisual.NATURAL
 
 # Cache for ball config
 static var _ball_config_cache: Dictionary = {}
@@ -76,6 +79,9 @@ func _setup_visual() -> void:
 func _draw() -> void:
 	if not _alive:
 		return
+	if _dying and _death_visual == DeathVisual.GAP:
+		_draw_gap_death()
+		return
 	var visual_radius := ball_radius * lerpf(1.0, 0.2, _death_progress)
 	var visual_color := color.darkened(_death_progress * 0.65)
 	visual_color.a *= lerpf(1.0, 0.25, _death_progress)
@@ -100,6 +106,28 @@ func _draw() -> void:
 				var start_angle := TAU * float(i) / 8.0
 				var end_angle := start_angle + TAU / 16.0
 				draw_arc(Vector2.ZERO, ring_radius, start_angle, end_angle, 8, ring_color, 1.5)
+
+func _draw_gap_death() -> void:
+	var fade := 1.0 - _death_progress
+	var core_radius := ball_radius * lerpf(1.0, 0.15, _death_progress)
+	var core_color := Color(1.0, 0.12, 0.08, 0.9 * fade)
+	draw_circle(Vector2.ZERO, core_radius, core_color)
+	
+	var flash_color := Color(1.0, 0.35, 0.1, 0.55 * fade)
+	draw_arc(Vector2.ZERO, ball_radius * lerpf(1.1, 1.9, _death_progress), 0, TAU, 20, flash_color, 2.0)
+	
+	for i in range(7):
+		var angle := TAU * float(i) / 7.0 + 0.25
+		var dir := Vector2(cos(angle), sin(angle))
+		var side := Vector2(-dir.y, dir.x)
+		var center := dir * ball_radius * lerpf(0.25, 1.55, _death_progress)
+		var shard_size := ball_radius * lerpf(0.35, 0.12, _death_progress)
+		var shard_color := Color(1.0, 0.05 + float(i % 2) * 0.12, 0.04, 0.8 * fade)
+		draw_polygon([
+			center + dir * shard_size,
+			center - dir * shard_size * 0.55 + side * shard_size * 0.45,
+			center - dir * shard_size * 0.45 - side * shard_size * 0.35,
+		], [shard_color])
 
 func _physics_process(delta: float) -> void:
 	if not _alive or _dying:
@@ -137,7 +165,7 @@ func _physics_process(delta: float) -> void:
 	
 	# Fallen below board — instant kill (board height 1080)
 	if position.y > 1100:
-		_die_naturally()
+		_die_through_gap()
 		return
 	
 	# Board edge bounce (board is 720×1080, ball in board-local coords)
@@ -257,9 +285,16 @@ func die() -> void:
 		set_collision_layer_value(1, false)
 
 func _die_naturally() -> void:
+	_start_death_animation(NATURAL_DEATH_DURATION, DeathVisual.NATURAL)
+
+func _die_through_gap() -> void:
+	_start_death_animation(GAP_DEATH_DURATION, DeathVisual.GAP)
+
+func _start_death_animation(duration: float, death_visual: int) -> void:
 	if _dying:
 		return
 	_dying = true
+	_death_visual = death_visual
 	_death_progress = 0.0
 	linear_velocity = Vector2.ZERO
 	angular_velocity = 0.0
@@ -267,7 +302,7 @@ func _die_naturally() -> void:
 	collision_layer = 0
 	collision_mask = 0
 	_death_tween = create_tween()
-	_death_tween.tween_property(self, "_death_progress", 1.0, NATURAL_DEATH_DURATION)
+	_death_tween.tween_property(self, "_death_progress", 1.0, duration)
 	_death_tween.finished.connect(die)
 
 func launch(velocity: Vector2) -> void:
