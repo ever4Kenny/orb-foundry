@@ -1,19 +1,26 @@
-# Codex Task: 球自然出局负向反馈
+# Codex Task: 球漏缝负向反馈
 
 ## 问题描述
 
-球没进球袋就死了（超时/卡住/掉出屏幕）时，目前直接 `die()` 瞬间消失，零反馈。
-球袋捕获的球有吸收动画，但自然死亡的球也应该有视觉收尾。
+当前球的死亡路径有三类：
+1. 进球袋 → slot 吸收动画（好）
+2. 超时/卡住 → 灰色消散（中性）
+3. 从 slot 之间缝隙漏下去（y > 1100，没碰到任何 slot）→ 也是灰色消散
 
-需要给球自然死亡加一个简单的"消散"动画：球缩小变暗，持续约 0.3 秒后真正死亡。
+第 3 种情况应该给负向反馈，让用户明确感知"球漏掉了"。与灰色消散区分开。
+
+板子底部有三个 slot：left(0.15) / center(0.50) / right(0.85)，宽度各 132px。
+球从缝隙漏下去时，应该看到类似"球碎掉/红色消失"的负向效果，持续 0.25-0.35 秒。
 
 ## 约束
 
-- **不要改的文件**：`project.godot`、所有 `.tscn`、`slot.gd`、`peg.gd`、`board.gd`、`hud.gd`、`ball_select.gd`、`reward_select.gd`、`upgrade_select.gd`、`round_manager.gd`、`score_manager.gd`
-- **可以改的文件**：`scripts/ball.gd`、`scripts/main.gd`
-- 球袋捕获的球走 `slot.gd` 的吸收路径（不要改），自然死亡的球才走新的消散动画
-- 消散要简短（0.25-0.35 秒），不需要很强，弱于 slot 反馈
-- 只用 Tween + _draw，不做粒子
+- **不要改的文件**：`project.godot`、所有 `.tscn`、`slot.gd`、`peg.gd`、`board.gd`、`hud.gd`、`ball_select.gd`、`reward_select.gd`、`upgrade_select.gd`、`round_manager.gd`、`score_manager.gd`、`main.gd`
+- **只改**：`scripts/ball.gd`
+- slot 捕获路径走 `die()` 保持不动
+- 超时/卡住保持现有灰色消散（`_die_naturally`）
+- 漏缝（y > 1100）需要一个新的、与消散不同的负向反馈动画
+- 只用 Tween + `_draw`
+- 不做粒子
 
 ## 验收标准
 
@@ -24,5 +31,5 @@ cd /home/kenny/orb_foundry/godot
 # 无 ERROR 行
 ```
 
-2. 球自然死亡时能看到缩小变暗再消失，不是瞬间消失
-3. 球进球袋的吸收动画不受影响
+2. 球从 slot 缝隙漏下去时能看到与"灰色消散"不同的负向视觉（如红色碎裂、红色闪烁消失等）
+3. slot 捕获和超时/卡住的行为不受影响
