@@ -139,11 +139,6 @@ func _physics_process(delta: float) -> void:
 	if ball_effect == BallEffect.MAGNET:
 		_apply_magnetic_force(delta)
 	
-	# Lifetime cap (reduced from 12s for faster round turnover)
-	if _lifetime > 8.0:
-		_die_naturally()
-		return
-	
 	# Speed cap
 	var sp = linear_velocity.length()
 	if sp > MAX_SPEED:
