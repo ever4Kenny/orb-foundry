@@ -163,8 +163,8 @@ func _physics_process(delta: float) -> void:
 		_die_naturally()
 		return
 	
-	# Fallen below board — instant kill (board height 1080)
-	if position.y > 1100:
+	# Fallen below slots — gap death (slots end at y≈952, threshold before viewport bottom)
+	if position.y > 980:
 		_die_through_gap()
 		return
 	

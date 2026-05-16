@@ -1,35 +1,27 @@
-# Codex Task: 球漏缝负向反馈
+# Codex Task: 修复漏缝反馈不可见
 
-## 问题描述
+## 问题
 
-当前球的死亡路径有三类：
-1. 进球袋 → slot 吸收动画（好）
-2. 超时/卡住 → 灰色消散（中性）
-3. 从 slot 之间缝隙漏下去（y > 1100，没碰到任何 slot）→ 也是灰色消散
+`ball.gd` 漏缝检测用 `position.y > 1100`，但板子高度 1080。
+球到 y>1100 时已在屏幕之外，`_draw_gap_death()` 的红色碎裂效果完全不可见。
 
-第 3 种情况应该给负向反馈，让用户明确感知"球漏掉了"。与灰色消散区分开。
+Root cause: 检测阈值（1100）超出可视区域，死亡动画画了但用户看不见。
 
-板子底部有三个 slot：left(0.15) / center(0.50) / right(0.85)，宽度各 132px。
-球从缝隙漏下去时，应该看到类似"球碎掉/红色消失"的负向效果，持续 0.25-0.35 秒。
+## 修复
+
+将阈值从 1100 改为略低于板子底部但还在可见范围的数值。
+Slot 底部在 y≈952（1080-160+32），所以阈值放到 y > 980 即可。
+既确保球已越过 slot 区，又保证碎裂动画在屏幕内可见。
 
 ## 约束
 
-- **不要改的文件**：`project.godot`、所有 `.tscn`、`slot.gd`、`peg.gd`、`board.gd`、`hud.gd`、`ball_select.gd`、`reward_select.gd`、`upgrade_select.gd`、`round_manager.gd`、`score_manager.gd`、`main.gd`
-- **只改**：`scripts/ball.gd`
-- slot 捕获路径走 `die()` 保持不动
-- 超时/卡住保持现有灰色消散（`_die_naturally`）
-- 漏缝（y > 1100）需要一个新的、与消散不同的负向反馈动画
-- 只用 Tween + `_draw`
-- 不做粒子
+- **只改** `scripts/ball.gd` 第 167 行的一个数字：1100 → 980
+- 其它一切不动
 
-## 验收标准
+## 验收
 
-1. 编译通过：
 ```bash
 cd /home/kenny/orb_foundry/godot
 ./Godot_v4.6-stable_linux.x86_64 --headless --quit 2>&1
 # 无 ERROR 行
 ```
-
-2. 球从 slot 缝隙漏下去时能看到与"灰色消散"不同的负向视觉（如红色碎裂、红色闪烁消失等）
-3. slot 捕获和超时/卡住的行为不受影响
