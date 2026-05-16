@@ -1,43 +1,51 @@
-# Codex Task: slot 奖励重新设计
+# Codex Task: ×1.5 倍率 + 第1关连续击中玩法
 
 ## 问题
 
-当前 3 个 slot 奖励：
-- 左(elasticity_boost): +25%弹跳 → 基本没用，低弹跳击中更多peg
-- 中(score_bonus): +10分 → 102个peg每碰一个就+10，进槽也是+10，太弱
-- 右(ball_recovery): +1球 → OK保持
+### 1. 倍率过高
+×2 太高，改成 ×1.5。需要将 multiplier 从 int 改为 float。
 
-## 新设计
+### 2. 第1关需要"连续击中"玩法
+第1关独特机制：连续击中普通(normal) peg 时，连击次数越多额外加分越多。
+- 每连续击中 normal peg 超过 1 个后，额外加分 = (连击数 - 1) × 5 分
+- 击中 bonus 或 danger peg 时连击中断（先结算当前连击加分，再重置）
+- 球死亡时结算当前连击
+- 结算面板（shot_result）显示：最大连击次数 + 连击额外总分
 
-| slot | 效果 | 实现 |
-|------|------|------|
-| 左 | **×2 下一击** | 下一次发射中所有 peg 命中得分翻倍 |
-| 中 | **+50分** | 直接加50分 |
-| 右 | +1球 | 不变 |
+## 实现要点
 
-## 实现细节
+### ×1.5 修改
+- `score_manager.gd`: `next_score_multiplier` 改为 `float = 1.0`
+- `ball.gd`: `score_multiplier` 改为 `float = 1.0`，得分计算用 `int(10 * score_multiplier)` 等
+- `slot.gd`: `next_score_multiplier = 2` → `= 1.5`
+- `hud.gd`: multiplier_label 显示 "×1.5 就绪"（用 `%.1f` 格式化）
+- 数值修正：25*1.5=37.5→38, 10*1.5=15
 
-### 左槽 "×2 下一击"
-- ScoreManager 新增 `next_score_multiplier: int = 1`
-- `reset()` 时重置为 1
-- slot 触发时设为 2
-- ball.gd 的 `on_peg_hit()` 中对 normal/bonus 得分乘以 `ScoreManager.next_score_multiplier`
-- 发射下一球后，在 main.gd 的 `_launch_selected_ball()` 中重置 multiplier 为 1
-- 显示：HUD 上如果 multiplier > 1，显示 "×2 就绪"
+### 连续击中（Combo）
+- `ball.gd`:
+  - 新增 `_consecutive_normal: int = 0`
+  - 新增 `_max_consecutive_normal: int = 0`
+  - 新增 `_combo_bonus_total: int = 0`
+  - normal peg 命中时 `_consecutive_normal += 1`，更新 max
+  - bonus/danger peg 命中时先结算 combo（`combo_bonus = max(0, _consecutive_normal - 1) * 5`），再重置为 0
+  - ball 死亡时（tree_exiting）结算最终 combo
+- `main.gd`:
+  - ball tree_exiting 时收集 combo 数据
+  - 传递 combo_max 和 combo_bonus 给 shot_result
+- `shot_result.gd` + `shot_result.tscn`:
+  - 新增 combo 显示行："最大连击: X (连击加分: +Y)"
+  - 只在 combo_max > 1 时显示
 
-### 中槽 "+50分"
-- 改 slot_effect 的数字从 10 到 50
-
-### 配置文件
-- `default.json`: 左 slot effect 改为 "score_multiplier"，label 改为 "×2 下一击"
-- `default.json`: 中 slot label 改为 "+50分"
+### Round 配置
+- `round_config.json`: 第1轮增加 `"mechanic": "combo"` 字段
+- `round_manager.gd` 或 `main.gd` 根据当前轮 mechanic 决定是否启用 combo
 
 ## 约束
 
-- **可以改**：`scripts/slot.gd`、`scripts/score_manager.gd`、`scripts/ball.gd`、`scripts/main.gd`、`scripts/ui/hud.gd`、`scenes/ui/hud.tscn`、`resources/board_layouts/default.json`
+- **可以改**：`scripts/ball.gd`、`scripts/main.gd`、`scripts/slot.gd`、`scripts/score_manager.gd`、`scripts/ui/hud.gd`、`scripts/ui/shot_result.gd`、`scenes/ui/shot_result.tscn`、`scenes/ui/hud.tscn`、`resources/round_config.json`
 - **不要改**：其它文件不动
-- 保持 slot_effect 字符串驱动，不硬编码
-- HUD 不需要大改，加一个 multiplier 提示即可
+- combo 仅在 round_data.mechanic == "combo" 时启用
+- shot_result 的 combo 行在非 combo 回合不显示
 
 ## 验收
 
