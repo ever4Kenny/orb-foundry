@@ -1,51 +1,95 @@
-# Codex Task: ×1.5 倍率 + 第1关连续击中玩法
+# Codex Task: 第2关连锁爆炸 + 关卡入口/结算 + combo动画 + 升级调整
 
-## 问题
+## Part 1: 关卡入口展示
 
-### 1. 倍率过高
-×2 太高，改成 ×1.5。需要将 multiplier 从 int 改为 float。
+每关开始前弹出一个半屏面板，显示：
+- 关卡名（如"第1关: 精准连击"）
+- 玩法详细说明（如"连续击中灰色钉子获得连击加分：连击数-1 ×5分。击中金色或红色钉子中断连击。"）
+- "点击开始" 按钮
 
-### 2. 第1关需要"连续击中"玩法
-第1关独特机制：连续击中普通(normal) peg 时，连击次数越多额外加分越多。
-- 每连续击中 normal peg 超过 1 个后，额外加分 = (连击数 - 1) × 5 分
-- 击中 bonus 或 danger peg 时连击中断（先结算当前连击加分，再重置）
-- 球死亡时结算当前连击
-- 结算面板（shot_result）显示：最大连击次数 + 连击额外总分
+实现：
+- 新建 `scripts/ui/round_entry.gd`（CanvasLayer）
+- 新建 `scenes/ui/round_entry.tscn`
+- `round_config.json` 增加 `"mechanic_desc"` 字段（每关一段说明文字）
+- `round_manager.gd` 新增 `ROUND_ENTRY` 状态，在 `start_round()` 前先进入此状态
+- `main.gd` 实例化 round_entry，连接信号，点击后继续到 BALL_SELECT
 
-## 实现要点
+## Part 2: 第2关 — 连锁爆炸 (Chain Explosion)
 
-### ×1.5 修改
-- `score_manager.gd`: `next_score_multiplier` 改为 `float = 1.0`
-- `ball.gd`: `score_multiplier` 改为 `float = 1.0`，得分计算用 `int(10 * score_multiplier)` 等
-- `slot.gd`: `next_score_multiplier = 2` → `= 1.5`
-- `hud.gd`: multiplier_label 显示 "×1.5 就绪"（用 `%.1f` 格式化）
-- 数值修正：25*1.5=37.5→38, 10*1.5=15
+### 规则
+- 第2关新增爆炸 peg（颜色：橙色 #ff6600，带脉冲光晕）
+- 球击中爆炸 peg → 80px 半径内所有 peg 被摧毁
+- 被连锁摧毁的 peg 正常计分（normal=10, bonus=25）
+- 连锁摧毁的 peg 不会再次触发爆炸（无递归）
+- 视觉：爆炸 peg 触发时 → 冲击波环扩散（draw_arc 缩放）+ 周围 peg 碎裂消失
 
-### 连续击中（Combo）
-- `ball.gd`:
-  - 新增 `_consecutive_normal: int = 0`
-  - 新增 `_max_consecutive_normal: int = 0`
-  - 新增 `_combo_bonus_total: int = 0`
-  - normal peg 命中时 `_consecutive_normal += 1`，更新 max
-  - bonus/danger peg 命中时先结算 combo（`combo_bonus = max(0, _consecutive_normal - 1) * 5`），再重置为 0
-  - ball 死亡时（tree_exiting）结算最终 combo
-- `main.gd`:
-  - ball tree_exiting 时收集 combo 数据
-  - 传递 combo_max 和 combo_bonus 给 shot_result
-- `shot_result.gd` + `shot_result.tscn`:
-  - 新增 combo 显示行："最大连击: X (连击加分: +Y)"
-  - 只在 combo_max > 1 时显示
+### 配置
+- `round_config.json` 第2轮：`"mechanic": "chain"`, `"explosion_peg_count": 8`
+- `board.gd`: 在 peg 生成时，根据 `explosion_peg_count` 随机分配一些 normal peg 变为 "explosion" 类型
+- 爆炸 peg 有自己的标签 `"explosive"`，可以是一部分 normal peg 转化
 
-### Round 配置
-- `round_config.json`: 第1轮增加 `"mechanic": "combo"` 字段
-- `round_manager.gd` 或 `main.gd` 根据当前轮 mechanic 决定是否启用 combo
+### 实现
+- `peg.gd`: 新增 `peg_type == "explosion"` 的绘制（橙色脉冲），新增 `explode()` 方法播放冲击波动画
+- `ball.gd`: `_handle_normal_hit` 中检测 peg_type == "explosion"，调用连锁摧毁
+- 连锁摧毁：遍历 `get_tree().get_nodes_in_group("pegs")`，对距离 < 80px 的 peg 调用 die() + 加分
 
-## 约束
+### shockwave 动画
+- peg.gd 的 `explode()`: 从半径 10 扩大到 80，tween 0.25s，draw_arc 橙色半透明 + 逐渐消失
 
-- **可以改**：`scripts/ball.gd`、`scripts/main.gd`、`scripts/slot.gd`、`scripts/score_manager.gd`、`scripts/ui/hud.gd`、`scripts/ui/shot_result.gd`、`scenes/ui/shot_result.tscn`、`scenes/ui/hud.tscn`、`resources/round_config.json`
-- **不要改**：其它文件不动
-- combo 仅在 round_data.mechanic == "combo" 时启用
-- shot_result 的 combo 行在非 combo 回合不显示
+## Part 3: combo 实时动画
+
+在 ball.gd 的 `_record_normal_combo()` 中，当连击数 >= 2 时，显示浮动文字：
+- 在球的位置上方创建一个临时 Label："连击! x3"（根据连击数）
+- 文字从球位置向上浮动 + 缩放弹出 + 渐隐
+- 颜色：渐变色（白→金→透明），字体稍大
+- 持续约 1 秒后自动删除
+- 用 Tween 实现，不新建场景文件
+
+实现方式（选择最简）：
+- `main.gd` 维护一个 `_spawn_combo_text(position, count)` 方法
+- 该方法创建一个 Label，挂 Tween 上浮+缩放+淡出，1s 后 queue_free
+
+### 实现细节
+- ball.gd 需要通知 main.gd 显示 combo 文字
+- 方案：ball.gd 新增信号 `combo_updated(combo_count: int)` 
+- main.gd 连接信号，创建浮动文字
+
+## Part 4: 升级调整
+
+为第2关设计新升级选项，替换或扩充现有升级：
+- 新增：`"id": "bigger_blast"`, `"name": "爆炸增强"`, `"type": "blast_radius"`, `"radius_multiplier": 1.4`, `"desc": "爆炸半径+40%"`
+- 新增：`"id": "more_explosives"`, `"name": "更多炸药"`, `"type": "add_pegs"`, `"peg_type": "explosion"`, `"count": 3`, `"desc": "盘面+3个爆炸peg"`
+- 保留原有 "金属镀层" 和 "危险清除"
+
+如果 blast_radius 实现太复杂，可以先只做 more_explosives（复用现有 add_pegs 机制，peg_type="explosion" 即可）。
+
+## Part 5: 关卡结算
+
+每关结束（所有 ball 落地 + slot 吸收完成）后：
+- 显示结算面板，内容：命中数、得分、combo数据（如有）
+- 用户点击确认后，如果过关 → 进入 REWARD_SELECT 或 UPGRADE_SELECT
+- 可以复用 shot_result 但改为关卡级汇总
+
+简化方案：复用现有 shot_result，但在 round 结束时（而非每 shot 后）显示。修改 main.gd 的回调逻辑。
+
+## 约束汇总
+
+**可以改**：
+- `scripts/ball.gd`、`scripts/peg.gd`、`scripts/board.gd`、`scripts/main.gd`、`scripts/round_manager.gd`、`scripts/score_manager.gd`
+- `scripts/ui/shot_result.gd`、`scripts/ui/round_entry.gd`（新建）、`scripts/ui/hud.gd`
+- `scenes/ui/round_entry.tscn`（新建）、`scenes/ui/shot_result.tscn`、`scenes/ui/upgrade_select.tscn`
+- `resources/round_config.json`、`resources/upgrade_config.json`
+
+**不要改**：`.gd` 和 `.tscn` 中未列出的文件
+
+## 优先级
+
+如果改动量太大，可以按此顺序降级：
+1. 必须：第2关连锁爆炸机制 + 配置
+2. 必须：关卡入口展示
+3. 重要：combo 实时动画
+4. 可选：升级调整（可以后续再做）
+5. 可选：关卡结算（可以先跳过，留现有 shot_result）
 
 ## 验收
 
