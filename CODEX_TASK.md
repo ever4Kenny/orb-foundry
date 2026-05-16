@@ -1,50 +1,44 @@
-# Codex Task: 密集 peg 板 + 缩小 peg/球
+# Codex Task: peg 形状布局 + 分数调整
 
 ## 问题描述
 
-当前 peg 板太稀疏（8行30个），导致：
-1. 策略性差 — 球路径单一，没什么选择
-2. 观赏性差 — 板子看起来很空
-3. peg 和球尺寸偏大（peg半径12，球半径20），限制了密度
+当前 peg 排列是均匀 stagger 网格（12行 × 8-9列），间距全等，太规整。
+需要像 Peglin 那样用 peg 摆出不同形状：斜线、弧线、密集板块等。
+同时分数目标需要随 peg 增多而提升。
 
-需要改为类似 Peglin / Roundguard 的密集 stagger 网格布局（pachinko 风格），缩小 peg 和球尺寸。
+## 目标
 
-## 目标参数
+### 形状需求
+板子上应该混合多种 peg 排列方式，不要全一样：
+1. **斜线**：一条从左上方到右下方的对角斜线（约15-20个 peg）
+2. **弧线**：一条弧形曲线（约15-20个 peg）
+3. **板块**：一片密集矩形区域（约25-35个 peg，间距比网格更小）
+4. **散点**：其余 peg 保持 stagger 网格作为填充
 
-### peg 布局
-- 板子 720×1080
-- peg_radius: 12 → 7
-- 行数: 12行，stagger（偶数行偏移）
-- 列数: 每行 8-9 个，stagger 交替（偶数行 8 个，奇数行 9 个，或反过来）
-- 行间距均匀覆盖板子 y 轴（约 y=12% 到 y=75%）
-- 保持 bonus/danger peg 的随机分配逻辑不变
+总数维持在 90-110 个 peg。
 
-### 球尺寸
-- ball_radius: 20 → 14（所有 4 种球）
-- 涉及 `resources/ball_config.json`
+### 分数提升
+- R1: 250 → 350
+- R2: 400 → 550
+- R3: 560 → 800
 
-### 分数目标
-- 当前 peg 总量约 30，目标分 80/120/160
-- 新 peg 总量约 100，按比例提升目标分到 250/400/560
-- 涉及 `resources/round_config.json`
+### 实现方式
+可以扩展 `board.gd` 的 `generate_pegs()` 来支持从 config 读取多种 pattern，每种 pattern 有独立的位置定义（绝对坐标或公式）。
+
+建议在 `default.json` 中增加一个 `patterns` 数组，board.gd 按 pattern 逐个生成 peg。
+如果实现太复杂，可以用另一种方式：在 JSON 中定义具体的坐标偏移来实现形状。
+具体方案由你决定，目标是产生视觉上明显不同的形状。
 
 ## 约束
 
-- **不要改的文件**：`project.godot`、所有 `.tscn`、所有 `.gd` 脚本文件
-- **只改配置文件**：`resources/board_layouts/default.json`、`resources/ball_config.json`、`resources/round_config.json`
-- peg 类型分配逻辑（bonus/danger/normal）在 board.gd 中按 round_data 的 bonus_peg_count/danger_peg_count 控制，不用动
-- 保持 board_width=720, board_height=1080
+- **可以改**：`scripts/board.gd`、`resources/board_layouts/default.json`、`resources/round_config.json`
+- **不要改**：`project.godot`、所有 `.tscn`、`ball.gd`、`peg.gd`、`slot.gd`、`main.gd` 等其它所有 .gd
+- peg 类型分配逻辑（bonus/danger/normal 的随机分配）保持不动
+- 保持 board_width=720, board_height=1080, peg_radius=7
 
 ## 验收标准
 
-1. 编译通过：
-```bash
-cd /home/kenny/orb_foundry/godot
-./Godot_v4.6-stable_linux.x86_64 --headless --quit 2>&1
-# 无 ERROR 行
-```
-
-2. JSON 语法正确（可以用 python3 -m json.tool 验证）
-3. peg 总数应该在 90-110 之间
-4. ball_radius 全部为 14
-5. 分数目标与 peg 总量成正比提升
+1. 编译通过
+2. JSON 语法正确
+3. peg 板视觉上有明显不同的形状区域（不是均匀网格）
+4. 总分目标提升
