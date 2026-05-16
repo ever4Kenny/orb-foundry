@@ -24,9 +24,11 @@
     {
       "id": 3,
       "name": "第3轮",
-      "target_score": 800,
+      "target_score": 700,
       "ball_count": 6,
-      "mechanic_desc": "完成最终目标分即可通关。注意管理剩余弹珠和危险钉子。",
+      "mechanic": "chain",
+      "mechanic_desc": "爆炸钉子回归！击中橙色爆炸钉摧毁80px范围内的钉子。本关爆炸钉较少（6个），需要配合升级效果。",
+      "explosion_peg_count": 6,
       "bonus_peg_count": 4,
       "danger_peg_count": 6
     }
