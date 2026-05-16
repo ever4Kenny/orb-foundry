@@ -8,7 +8,7 @@ signal round_ended(round_index: int, passed: bool)
 signal upgrade_applied(upgrade: Dictionary)
 signal game_over(won: bool, final_score: int)
 
-enum GameState { IDLE, PLAYING, BALL_SELECT, REWARD_SELECT, UPGRADE_SELECT, GAME_OVER }
+enum GameState { IDLE, ROUND_ENTRY, PLAYING, BALL_SELECT, REWARD_SELECT, UPGRADE_SELECT, GAME_OVER }
 
 var current_round: int = 0
 var shots_left: int = 0
@@ -48,8 +48,12 @@ func start_round(ri: int) -> void:
 	current_round = ri
 	var rd = _rounds_data[ri]
 	shots_left = rd.get("ball_count", 4)
-	state = GameState.BALL_SELECT
+	state = GameState.ROUND_ENTRY
 	round_started.emit(ri, rd)
+
+func enter_ball_select() -> void:
+	if state == GameState.ROUND_ENTRY:
+		state = GameState.BALL_SELECT
 
 func use_shot() -> void:
 	shots_left -= 1
@@ -90,6 +94,8 @@ func end_round() -> void:
 
 func apply_upgrade(upgrade: Dictionary) -> void:
 	upgrade_chosen = upgrade
+	if str(upgrade.get("type", "")) == "blast_radius":
+		ScoreManager.blast_radius_multiplier = float(upgrade.get("radius_multiplier", 1.0))
 	upgrade_applied.emit(upgrade)
 
 func next_round() -> void:

@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://csf4t7fqq0j42"]
+
+[ext_resource type="Script" path="res://scripts/ui/round_entry.gd" id="1_script"]
+
+[node name="RoundEntry" type="CanvasLayer"]
+script = ExtResource("1_script")

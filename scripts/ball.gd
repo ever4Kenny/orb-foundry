@@ -5,6 +5,7 @@ class_name Ball
 extends RigidBody2D
 
 signal split_created(child: RigidBody2D)
+signal combo_updated(combo_count: int)
 
 enum BallEffect { NONE, PIERCE, MAGNET, SPLIT }
 enum DeathVisual { NATURAL, GAP }
@@ -29,6 +30,7 @@ const GAP_DEATH_DURATION := 0.3
 @export var split_radius: float = 12.0
 @export var score_multiplier: float = 1.0
 @export var combo_enabled: bool = false
+@export var blast_radius: float = 80.0
 
 var _alive: bool = true
 var _dying: bool = false
@@ -188,7 +190,7 @@ func on_peg_hit(peg_type: String, peg_tags: Array, peg_node: Node) -> bool:
 		BallEffect.PIERCE:
 			return _handle_pierce(peg_type, peg_tags, peg_node)
 		_:
-			return _handle_normal_hit(peg_type, peg_tags)
+			return _handle_normal_hit(peg_type, peg_tags, peg_node)
 
 func _handle_pierce(peg_type: String, peg_tags: Array, peg_node: Node) -> bool:
 	# Don't re-score already pierced pegs
@@ -203,6 +205,10 @@ func _handle_pierce(peg_type: String, peg_tags: Array, peg_node: Node) -> bool:
 		"normal":
 			ScoreManager.add(int(round(10 * score_multiplier)))
 			_record_normal_combo()
+		"explosion":
+			ScoreManager.add(int(round(10 * score_multiplier)))
+			_record_normal_combo()
+			_trigger_chain_explosion(peg_node)
 		"danger":
 			_break_combo()
 			ScoreManager.add(-5)
@@ -211,7 +217,7 @@ func _handle_pierce(peg_type: String, peg_tags: Array, peg_node: Node) -> bool:
 	col_count += 1
 	return true
 
-func _handle_normal_hit(peg_type: String, peg_tags: Array) -> bool:
+func _handle_normal_hit(peg_type: String, peg_tags: Array, peg_node: Node) -> bool:
 	col_count += 1
 	
 	match peg_type:
@@ -221,6 +227,10 @@ func _handle_normal_hit(peg_type: String, peg_tags: Array) -> bool:
 		"normal":
 			ScoreManager.add(int(round(10 * score_multiplier)))
 			_record_normal_combo()
+		"explosion":
+			ScoreManager.add(int(round(10 * score_multiplier)))
+			_record_normal_combo()
+			_trigger_chain_explosion(peg_node)
 		"danger":
 			_break_combo()
 			ScoreManager.add(-5)
@@ -232,6 +242,29 @@ func _handle_normal_hit(peg_type: String, peg_tags: Array) -> bool:
 		return false
 	
 	return true
+
+func _trigger_chain_explosion(source_peg: Node) -> void:
+	if source_peg == null or not is_instance_valid(source_peg):
+		return
+	if source_peg.has_method("explode"):
+		source_peg.explode(blast_radius)
+	var pegs := get_tree().get_nodes_in_group("pegs")
+	for peg in pegs:
+		if peg == source_peg or not is_instance_valid(peg) or not peg.alive:
+			continue
+		if source_peg.global_position.distance_to(peg.global_position) > blast_radius:
+			continue
+		_score_chain_destroyed_peg(str(peg.peg_type))
+		peg.die()
+
+func _score_chain_destroyed_peg(peg_type: String) -> void:
+	match peg_type:
+		"bonus":
+			ScoreManager.add(int(round(25 * score_multiplier)))
+		"normal", "explosion":
+			ScoreManager.add(int(round(10 * score_multiplier)))
+		"danger":
+			ScoreManager.add(-5)
 
 func _apply_magnetic_force(delta: float) -> void:
 	var nearest_peg = null
@@ -275,6 +308,7 @@ func _create_split_ball(angle: float, speed: float) -> RigidBody2D:
 	child.color = color
 	child.score_multiplier = score_multiplier
 	child.combo_enabled = combo_enabled
+	child.blast_radius = blast_radius
 	child.split_threshold = 999  # don't split again
 	child.col_count = 0
 	child.position = position
@@ -341,6 +375,8 @@ func _record_normal_combo() -> void:
 		return
 	_consecutive_normal += 1
 	_max_consecutive_normal = max(_max_consecutive_normal, _consecutive_normal)
+	if _consecutive_normal >= 2:
+		combo_updated.emit(_consecutive_normal)
 
 func _break_combo() -> void:
 	if not combo_enabled:

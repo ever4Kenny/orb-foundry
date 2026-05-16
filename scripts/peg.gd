@@ -11,11 +11,20 @@ extends StaticBody2D
 var _color_normal: Color = Color("#666666")
 var _color_bonus: Color = Color("#ffaa00")
 var _color_danger: Color = Color("#cc3333")
+var _color_explosion: Color = Color("#ff6600")
 var _hit_feedback: float = 0.0
 var _hit_scale: float = 1.0
 var _remove_after_feedback: bool = false
 var _hit_scale_tween: Tween
 var _hit_fade_tween: Tween
+var _shockwave_radius: float = 0.0:
+	set(value):
+		_shockwave_radius = value
+		queue_redraw()
+var _shockwave_alpha: float = 0.0:
+	set(value):
+		_shockwave_alpha = value
+		queue_redraw()
 
 func _ready() -> void:
 	_setup_collision()
@@ -59,10 +68,18 @@ func _draw() -> void:
 		"danger":
 			draw_circle(Vector2.ZERO, radius, _color_danger)
 			draw_arc(Vector2.ZERO, radius, 0, TAU, 16, Color("#992222"), 1.0)
+		"explosion":
+			var pulse = sin(Time.get_ticks_msec() / 180.0) * 0.25 + 0.75
+			var glow := _color_explosion
+			glow.a = 0.28 * pulse
+			draw_circle(Vector2.ZERO, radius * 2.0, glow)
+			draw_circle(Vector2.ZERO, radius, _color_explosion * pulse)
+			draw_arc(Vector2.ZERO, radius, 0, TAU, 16, Color("#ffcc66"), 1.5)
 	_draw_hit_feedback(radius)
+	_draw_shockwave()
 
 func _process(_delta: float) -> void:
-	if (peg_type == "bonus" and alive) or _hit_feedback > 0.0:
+	if ((peg_type == "bonus" or peg_type == "explosion") and alive) or _hit_feedback > 0.0 or _shockwave_alpha > 0.0:
 		queue_redraw()  # pulse animation
 
 func _on_body_entered(body: Node) -> void:
@@ -76,7 +93,8 @@ func _on_body_entered(body: Node) -> void:
 		if peg_type != "danger":
 			alive = false
 			collision_layer = 0
-		_play_hit_feedback(peg_type != "danger")
+		if peg_type != "explosion":
+			_play_hit_feedback(peg_type != "danger")
 
 func _draw_hit_feedback(radius: float) -> void:
 	if _hit_feedback <= 0.0:
@@ -94,10 +112,43 @@ func _draw_hit_feedback(radius: float) -> void:
 			var slash := radius * 0.9
 			draw_line(Vector2(-slash, -slash), Vector2(slash, slash), flash, 3.0)
 			draw_line(Vector2(-slash, slash), Vector2(slash, -slash), flash, 3.0)
+		"explosion":
+			var flash := Color("#ffb044")
+			flash.a = 0.7 * _hit_feedback
+			draw_arc(Vector2.ZERO, radius * 1.65, 0, TAU, 24, flash, 3.0)
 		_:
 			var flash := Color.WHITE
 			flash.a = 0.5 * _hit_feedback
 			draw_arc(Vector2.ZERO, radius * 1.45, 0, TAU, 24, flash, 2.0)
+
+func _draw_shockwave() -> void:
+	if _shockwave_alpha <= 0.0:
+		return
+	var shockwave_color := _color_explosion
+	shockwave_color.a = _shockwave_alpha
+	draw_arc(Vector2.ZERO, _shockwave_radius, 0, TAU, 48, shockwave_color, 4.0)
+
+func explode(radius: float = 80.0) -> void:
+	alive = false
+	collision_layer = 0
+	_hit_feedback = 0.0
+	_hit_scale = 1.0
+	_shockwave_radius = 10.0
+	_shockwave_alpha = 0.8
+	if is_instance_valid(_hit_scale_tween):
+		_hit_scale_tween.kill()
+	if is_instance_valid(_hit_fade_tween):
+		_hit_fade_tween.kill()
+	var tween := create_tween()
+	tween.set_parallel(true)
+	tween.tween_property(self, "_shockwave_radius", radius, 0.25)
+	tween.tween_property(self, "_shockwave_alpha", 0.0, 0.25)
+	tween.finished.connect(_on_explode_finished)
+	queue_redraw()
+
+func _on_explode_finished() -> void:
+	hide()
+	queue_redraw()
 
 func _play_hit_feedback(remove_after_feedback: bool) -> void:
 	_remove_after_feedback = remove_after_feedback

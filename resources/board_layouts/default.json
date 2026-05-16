@@ -53,6 +53,12 @@
       "speed_penalty": 0.8,
       "disappear": false,
       "tags": ["danger"]
+    },
+    "explosion": {
+      "color": "#ff6600",
+      "score": 10,
+      "disappear": true,
+      "tags": ["normal", "explosive"]
     }
   },
   "slots": [

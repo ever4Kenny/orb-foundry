@@ -17,6 +17,21 @@
       "peg_type": "danger",
       "also_remove": "normal",
       "ratio": "1:1"
+    },
+    {
+      "id": "bigger_blast",
+      "name": "爆炸增强",
+      "type": "blast_radius",
+      "radius_multiplier": 1.4,
+      "desc": "爆炸半径+40%"
+    },
+    {
+      "id": "more_explosives",
+      "name": "更多炸药",
+      "type": "add_pegs",
+      "peg_type": "explosion",
+      "count": 3,
+      "desc": "盘面+3个爆炸peg"
     }
   ],
   "reward_balls": ["iron", "crystal", "glass"]

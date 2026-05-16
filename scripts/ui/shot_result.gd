@@ -89,7 +89,6 @@ func _build_ui() -> void:
 	_click_label.add_theme_color_override("font_color", Color(1, 1, 1, 0.5))
 	vbox.add_child(_click_label)
 
-	# 自动消失计时器
 	_timer = Timer.new()
 	_timer.name = "AutoDismiss"
 	_timer.one_shot = true
@@ -111,7 +110,6 @@ func show_result(peg_hits: int, score_gained: int, combo_max: int = 0, combo_bon
 	if combo_max > 1:
 		_combo_label.text = "最大连击: %d (连击加分: +%d)" % [combo_max, combo_bonus]
 	visible = true
-	_timer.start()
 
 func _on_bg_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.pressed:
