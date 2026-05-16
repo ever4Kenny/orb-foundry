@@ -54,7 +54,7 @@ func _setup_visual() -> void:
 	queue_redraw()
 
 func _draw() -> void:
-	if not alive and _hit_feedback <= 0.0:
+	if not alive and _hit_feedback <= 0.0 and _shockwave_alpha <= 0.0:
 		return
 	var radius := peg_radius * _hit_scale
 	match peg_type:
