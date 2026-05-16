@@ -3,7 +3,7 @@
     {
       "id": 1,
       "name": "第1轮",
-      "target_score": 900,
+      "target_score": 600,
       "ball_count": 4,
       "mechanic": "combo",
       "mechanic_desc": "连续击中灰色钉子获得连击加分：连击数-1 ×5分。击中金色或红色钉子中断连击。",
