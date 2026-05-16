@@ -59,7 +59,7 @@
     {
       "position": "left",
       "x_ratio": 0.15,
-      "y_offset": -160,
+      "y_offset": -36,
       "width": 132,
       "height": 32,
       "effect": "elasticity_boost",
@@ -68,7 +68,7 @@
     {
       "position": "center",
       "x_ratio": 0.50,
-      "y_offset": -160,
+      "y_offset": -36,
       "width": 132,
       "height": 32,
       "effect": "score_bonus",
@@ -77,7 +77,7 @@
     {
       "position": "right",
       "x_ratio": 0.85,
-      "y_offset": -160,
+      "y_offset": -36,
       "width": 132,
       "height": 32,
       "effect": "ball_recovery",

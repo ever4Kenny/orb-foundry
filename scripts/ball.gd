@@ -158,8 +158,8 @@ func _physics_process(delta: float) -> void:
 		_die_naturally()
 		return
 	
-	# Fallen below slots — gap death (slots end at y≈952, threshold before viewport bottom)
-	if position.y > 980:
+	# Fallen below slots — gap death (slots end at y≈1060, threshold before viewport bottom)
+	if position.y > 1070:
 		_die_through_gap()
 		return
 	
