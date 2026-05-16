@@ -5,6 +5,7 @@
       "name": "第1轮",
       "target_score": 350,
       "ball_count": 4,
+      "mechanic": "combo",
       "bonus_peg_count": 4,
       "danger_peg_count": 4
     },

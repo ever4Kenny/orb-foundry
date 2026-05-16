@@ -27,7 +27,8 @@ const GAP_DEATH_DURATION := 0.3
 @export var color: Color = Color.WHITE
 @export var col_count: int = 0
 @export var split_radius: float = 12.0
-@export var score_multiplier: int = 1
+@export var score_multiplier: float = 1.0
+@export var combo_enabled: bool = false
 
 var _alive: bool = true
 var _dying: bool = false
@@ -41,6 +42,10 @@ var _pierced_pegs: Array = []  # pegs already pierced (don't re-score)
 var _magnet_target_pos: Vector2 = Vector2.ZERO
 var _death_tween: Tween = null
 var _death_visual: int = DeathVisual.NATURAL
+var _consecutive_normal: int = 0
+var _max_consecutive_normal: int = 0
+var _combo_bonus_total: int = 0
+var _combo_finalized: bool = false
 
 # Cache for ball config
 static var _ball_config_cache: Dictionary = {}
@@ -193,10 +198,13 @@ func _handle_pierce(peg_type: String, peg_tags: Array, peg_node: Node) -> bool:
 	
 	match peg_type:
 		"bonus":
-			ScoreManager.add(25 * score_multiplier)
+			_break_combo()
+			ScoreManager.add(int(round(25 * score_multiplier)))
 		"normal":
-			ScoreManager.add(10 * score_multiplier)
+			ScoreManager.add(int(round(10 * score_multiplier)))
+			_record_normal_combo()
 		"danger":
+			_break_combo()
 			ScoreManager.add(-5)
 			linear_velocity *= 0.7
 	
@@ -208,10 +216,13 @@ func _handle_normal_hit(peg_type: String, peg_tags: Array) -> bool:
 	
 	match peg_type:
 		"bonus":
-			ScoreManager.add(25 * score_multiplier)
+			_break_combo()
+			ScoreManager.add(int(round(25 * score_multiplier)))
 		"normal":
-			ScoreManager.add(10 * score_multiplier)
+			ScoreManager.add(int(round(10 * score_multiplier)))
+			_record_normal_combo()
 		"danger":
+			_break_combo()
 			ScoreManager.add(-5)
 			linear_velocity *= 0.8
 	
@@ -263,6 +274,7 @@ func _create_split_ball(angle: float, speed: float) -> RigidBody2D:
 	child.weight_value = weight_value
 	child.color = color
 	child.score_multiplier = score_multiplier
+	child.combo_enabled = combo_enabled
 	child.split_threshold = 999  # don't split again
 	child.col_count = 0
 	child.position = position
@@ -273,6 +285,7 @@ func _create_split_ball(angle: float, speed: float) -> RigidBody2D:
 func die() -> void:
 	if is_instance_valid(_death_tween):
 		_death_tween.kill()
+	finalize_combo()
 	_alive = false
 	# Signal parent to remove
 	if has_signal("tree_exiting"):
@@ -310,6 +323,33 @@ func launch(velocity: Vector2) -> void:
 
 func is_alive() -> bool:
 	return _alive
+
+func finalize_combo() -> void:
+	if _combo_finalized:
+		return
+	_break_combo()
+	_combo_finalized = true
+
+func get_combo_max() -> int:
+	return _max_consecutive_normal
+
+func get_combo_bonus_total() -> int:
+	return _combo_bonus_total
+
+func _record_normal_combo() -> void:
+	if not combo_enabled:
+		return
+	_consecutive_normal += 1
+	_max_consecutive_normal = max(_max_consecutive_normal, _consecutive_normal)
+
+func _break_combo() -> void:
+	if not combo_enabled:
+		return
+	var combo_bonus: int = max(0, _consecutive_normal - 1) * 5
+	if combo_bonus > 0:
+		_combo_bonus_total += combo_bonus
+		ScoreManager.add(combo_bonus)
+	_consecutive_normal = 0
 
 # Static helper to create ball from config
 static func create_from_config(config: Dictionary) -> RigidBody2D:

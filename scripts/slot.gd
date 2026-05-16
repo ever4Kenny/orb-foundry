@@ -67,7 +67,7 @@ func _on_body_entered(body: Node) -> void:
 		"score_bonus":
 			ScoreManager.add(50)
 		"score_multiplier":
-			ScoreManager.next_score_multiplier = 2
+			ScoreManager.next_score_multiplier = 1.5
 		"ball_recovery":
 			RoundManager.shots_left += 1
 	

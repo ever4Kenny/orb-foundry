@@ -37,6 +37,6 @@ func _refresh() -> void:
 
 func _update_multiplier_label() -> void:
 	if ScoreManager.next_score_multiplier > 1:
-		multiplier_label.text = "×%d 就绪" % ScoreManager.next_score_multiplier
+		multiplier_label.text = "×%.1f 就绪" % ScoreManager.next_score_multiplier
 	else:
 		multiplier_label.text = ""

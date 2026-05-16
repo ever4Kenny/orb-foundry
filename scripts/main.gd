@@ -20,6 +20,9 @@ var ball_lookup: Dictionary = {}
 var _shot_balls: Array[Node] = []
 var _shot_score_start: int = 0
 var _shot_peg_hits: int = 0
+var _shot_combo_enabled: bool = false
+var _shot_combo_max: int = 0
+var _shot_combo_bonus_total: int = 0
 var _shot_feedback_showing: bool = false
 var _shot_result: CanvasLayer = null
 
@@ -110,13 +113,17 @@ func _launch_selected_ball(release_position: Vector2) -> void:
 	# Reset per-shot tracking
 	_shot_score_start = ScoreManager.get_score()
 	_shot_peg_hits = 0
+	_shot_combo_enabled = str(RoundManager.get_round_data().get("mechanic", "")) == "combo"
+	_shot_combo_max = 0
+	_shot_combo_bonus_total = 0
 	_shot_balls.clear()
 	_shot_feedback_showing = false
 
 	var ball := BALL_SCENE.instantiate()
 	_apply_ball_config(ball, cfg)
 	ball.score_multiplier = ScoreManager.next_score_multiplier
-	ScoreManager.next_score_multiplier = 1
+	ball.combo_enabled = _shot_combo_enabled
+	ScoreManager.next_score_multiplier = 1.0
 	if ScoreManager.next_elasticity_boost > 0.0:
 		ball.bounce_value += ScoreManager.next_elasticity_boost
 		ScoreManager.next_elasticity_boost = 0.0
@@ -143,12 +150,21 @@ func _on_split_created(child: RigidBody2D) -> void:
 	_shot_balls.append(child)
 
 func _on_ball_exiting(ball: Node) -> void:
+	if ball.has_method("finalize_combo"):
+		ball.finalize_combo()
 	_shot_peg_hits += ball.col_count
+	if _shot_combo_enabled:
+		if ball.has_method("get_combo_max"):
+			_shot_combo_max = max(_shot_combo_max, ball.get_combo_max())
+		if ball.has_method("get_combo_bonus_total"):
+			_shot_combo_bonus_total += ball.get_combo_bonus_total()
 
 func _show_shot_feedback() -> void:
 	_shot_feedback_showing = true
 	var score_gained := ScoreManager.get_score() - _shot_score_start
-	_shot_result.show_result(_shot_peg_hits, score_gained)
+	var combo_max := _shot_combo_max if _shot_combo_enabled else 0
+	var combo_bonus := _shot_combo_bonus_total if _shot_combo_enabled else 0
+	_shot_result.show_result(_shot_peg_hits, score_gained, combo_max, combo_bonus)
 
 func _on_shot_feedback_dismissed() -> void:
 	_shot_feedback_showing = false

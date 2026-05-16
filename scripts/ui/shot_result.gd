@@ -6,6 +6,7 @@ signal dismissed
 
 var _peg_hits_label: Label
 var _score_label: Label
+var _combo_label: Label
 var _click_label: Label
 var _timer: Timer
 var _dismissed: bool = false
@@ -28,8 +29,8 @@ func _build_ui() -> void:
 	var panel := Panel.new()
 	panel.name = "Panel"
 	panel.set_anchors_preset(Control.PRESET_CENTER)
-	panel.custom_minimum_size = Vector2(360, 220)
-	panel.position = Vector2(-180, -110)
+	panel.custom_minimum_size = Vector2(420, 250)
+	panel.position = Vector2(-210, -125)
 	add_child(panel)
 
 	var vbox := VBoxContainer.new()
@@ -67,6 +68,16 @@ func _build_ui() -> void:
 	_score_label.add_theme_color_override("font_color", Color("#44ff44"))
 	vbox.add_child(_score_label)
 
+	vbox.add_child(_spacer(4))
+
+	_combo_label = Label.new()
+	_combo_label.name = "Combo"
+	_combo_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_combo_label.add_theme_font_size_override("font_size", 18)
+	_combo_label.add_theme_color_override("font_color", Color("#66ddff"))
+	_combo_label.visible = false
+	vbox.add_child(_combo_label)
+
 	vbox.add_child(_spacer(16))
 
 	# 点击继续提示
@@ -91,11 +102,14 @@ func _spacer(height: int) -> Control:
 	c.custom_minimum_size = Vector2(0, height)
 	return c
 
-func show_result(peg_hits: int, score_gained: int) -> void:
+func show_result(peg_hits: int, score_gained: int, combo_max: int = 0, combo_bonus: int = 0) -> void:
 	if _dismissed:
 		return
 	_peg_hits_label.text = "命中: %d 个钉子" % peg_hits
 	_score_label.text = "得分: %+d" % score_gained
+	_combo_label.visible = combo_max > 1
+	if combo_max > 1:
+		_combo_label.text = "最大连击: %d (连击加分: +%d)" % [combo_max, combo_bonus]
 	visible = true
 	_timer.start()
 
@@ -113,3 +127,4 @@ func _dismiss() -> void:
 
 func reset() -> void:
 	_dismissed = false
+	_combo_label.visible = false
