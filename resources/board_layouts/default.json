@@ -62,8 +62,8 @@
       "y_offset": -36,
       "width": 132,
       "height": 32,
-      "effect": "elasticity_boost",
-      "label": "弹性+"
+      "effect": "score_multiplier",
+      "label": "×2 下一击"
     },
     {
       "position": "center",
@@ -72,7 +72,7 @@
       "width": 132,
       "height": 32,
       "effect": "score_bonus",
-      "label": "+10分"
+      "label": "+50分"
     },
     {
       "position": "right",

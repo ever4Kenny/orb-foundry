@@ -3,12 +3,11 @@
 
 extends Area2D
 
-const ELASTICITY_BOOST := 0.25
 const ABSORB_DURATION := 0.28
 
 @export var slot_position: String = "center"  # left, center, right
-@export var slot_effect: String = "score_bonus"  # score_bonus, elasticity_boost, ball_recovery
-@export var slot_label: String = "+10分"
+@export var slot_effect: String = "score_bonus"  # score_bonus, score_multiplier, ball_recovery
+@export var slot_label: String = "+50分"
 
 var _feedback: float = 0.0
 var _feedback_scale: float = 1.0
@@ -38,7 +37,7 @@ func _draw() -> void:
 	match slot_effect:
 		"score_bonus":
 			slot_color = Color("#4488ff")
-		"elasticity_boost":
+		"score_multiplier":
 			slot_color = Color("#44dd44")
 		"ball_recovery":
 			slot_color = Color("#ffaa00")
@@ -66,9 +65,9 @@ func _on_body_entered(body: Node) -> void:
 	
 	match slot_effect:
 		"score_bonus":
-			ScoreManager.add(10)
-		"elasticity_boost":
-			ScoreManager.next_elasticity_boost = ELASTICITY_BOOST
+			ScoreManager.add(50)
+		"score_multiplier":
+			ScoreManager.next_score_multiplier = 2
 		"ball_recovery":
 			RoundManager.shots_left += 1
 	

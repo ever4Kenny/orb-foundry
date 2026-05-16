@@ -27,6 +27,7 @@ const GAP_DEATH_DURATION := 0.3
 @export var color: Color = Color.WHITE
 @export var col_count: int = 0
 @export var split_radius: float = 12.0
+@export var score_multiplier: int = 1
 
 var _alive: bool = true
 var _dying: bool = false
@@ -192,9 +193,9 @@ func _handle_pierce(peg_type: String, peg_tags: Array, peg_node: Node) -> bool:
 	
 	match peg_type:
 		"bonus":
-			ScoreManager.add(25)
+			ScoreManager.add(25 * score_multiplier)
 		"normal":
-			ScoreManager.add(10)
+			ScoreManager.add(10 * score_multiplier)
 		"danger":
 			ScoreManager.add(-5)
 			linear_velocity *= 0.7
@@ -207,9 +208,9 @@ func _handle_normal_hit(peg_type: String, peg_tags: Array) -> bool:
 	
 	match peg_type:
 		"bonus":
-			ScoreManager.add(25)
+			ScoreManager.add(25 * score_multiplier)
 		"normal":
-			ScoreManager.add(10)
+			ScoreManager.add(10 * score_multiplier)
 		"danger":
 			ScoreManager.add(-5)
 			linear_velocity *= 0.8
@@ -261,6 +262,7 @@ func _create_split_ball(angle: float, speed: float) -> RigidBody2D:
 	child.bounce_value = bounce_value
 	child.weight_value = weight_value
 	child.color = color
+	child.score_multiplier = score_multiplier
 	child.split_threshold = 999  # don't split again
 	child.col_count = 0
 	child.position = position

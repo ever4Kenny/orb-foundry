@@ -115,6 +115,8 @@ func _launch_selected_ball(release_position: Vector2) -> void:
 
 	var ball := BALL_SCENE.instantiate()
 	_apply_ball_config(ball, cfg)
+	ball.score_multiplier = ScoreManager.next_score_multiplier
+	ScoreManager.next_score_multiplier = 1
 	if ScoreManager.next_elasticity_boost > 0.0:
 		ball.bounce_value += ScoreManager.next_elasticity_boost
 		ScoreManager.next_elasticity_boost = 0.0
