@@ -66,10 +66,12 @@ func _on_body_entered(body: Node) -> void:
 	var base_score := 0
 	match slot_effect:
 		"score_bonus":
-			base_score = RelicManager.get_center_slot_score(10) if slot_position == "center" else 10
+			base_score = RelicManager.get_center_slot_score(50) if slot_position == "center" else 50
 			ScoreManager.add(base_score)
 		"ball_bonus":
 			ScoreManager.next_elasticity_boost += 0.10
+		"next_round_score_multiplier":
+			ScoreManager.next_round_score_multiplier = 1.5
 		"score_multiplier":
 			ScoreManager.next_score_multiplier = 1.5
 		"ball_recovery":

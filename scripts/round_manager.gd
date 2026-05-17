@@ -52,6 +52,7 @@ func start_round(ri: int) -> void:
 	current_round = ri
 	var rd = _rounds_data[ri]
 	shots_left = rd.get("ball_count", 4)
+	ScoreManager.apply_round_multiplier()
 	state = GameState.BALL_SELECT
 	# Dispatch onRoundStart first (fills pending effects list);
 	# main.gd's _on_round_started handler will apply them after board is rebuilt.

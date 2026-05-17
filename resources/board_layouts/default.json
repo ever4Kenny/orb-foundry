@@ -2,33 +2,120 @@
   "board_width": 720,
   "board_height": 1080,
   "peg_radius": 7,
-  "peg_rows": [
-    0.12,
-    0.18,
-    0.23,
-    0.29,
-    0.35,
-    0.41,
-    0.46,
-    0.52,
-    0.58,
-    0.64,
-    0.69,
-    0.75
-  ],
-  "peg_cols": [
-    8,
-    9,
-    8,
-    9,
-    8,
-    9,
-    8,
-    9,
-    8,
-    9,
-    8,
-    9
+  "patterns": [
+    {
+      "type": "arc",
+      "count": 12,
+      "center": [
+        0.5,
+        0.08
+      ],
+      "radius": 120,
+      "start_degrees": 20,
+      "end_degrees": 160
+    },
+    {
+      "type": "line",
+      "count": 10,
+      "start": [
+        0.12,
+        0.15
+      ],
+      "end": [
+        0.35,
+        0.42
+      ]
+    },
+    {
+      "type": "line",
+      "count": 10,
+      "start": [
+        0.88,
+        0.15
+      ],
+      "end": [
+        0.65,
+        0.42
+      ]
+    },
+    {
+      "type": "block",
+      "rows": 4,
+      "cols": 7,
+      "start": [
+        0.22,
+        0.45
+      ],
+      "spacing": [
+        56,
+        38
+      ]
+    },
+    {
+      "type": "arc",
+      "count": 14,
+      "center": [
+        0.5,
+        0.58
+      ],
+      "radius": 160,
+      "start_degrees": 200,
+      "end_degrees": 340
+    },
+    {
+      "type": "stagger",
+      "rows": [
+        0.72,
+        0.78,
+        0.84
+      ],
+      "cols": [
+        4,
+        4,
+        4
+      ],
+      "x_min_ratio": 0.04,
+      "x_max_ratio": 0.38
+    },
+    {
+      "type": "stagger",
+      "rows": [
+        0.72,
+        0.78,
+        0.84
+      ],
+      "cols": [
+        4,
+        4,
+        4
+      ],
+      "x_min_ratio": 0.62,
+      "x_max_ratio": 0.96
+    },
+    {
+      "type": "line",
+      "count": 6,
+      "start": [
+        0.35,
+        0.75
+      ],
+      "end": [
+        0.42,
+        0.88
+      ]
+    },
+    {
+      "type": "line",
+      "count": 6,
+      "start": [
+        0.65,
+        0.75
+      ],
+      "end": [
+        0.58,
+        0.88
+      ]
+    }
   ],
   "peg_types": {
     "normal": {
@@ -65,9 +152,9 @@
       "y_offset": -36,
       "width": 132,
       "height": 32,
-      "effect": "ball_bonus",
-      "elasticity_delta": 0.1,
-      "label": "弹性+10%（下一颗球）"
+      "effect": "next_round_score_multiplier",
+      "multiplier": 1.5,
+      "label": "下一轮得分×1.5"
     },
     {
       "position": "center",
@@ -76,7 +163,7 @@
       "width": 132,
       "height": 32,
       "effect": "score_bonus",
-      "label": "+10分（R5时+25）"
+      "label": "+50分（R5时+25）"
     },
     {
       "position": "right",
@@ -85,7 +172,7 @@
       "width": 132,
       "height": 32,
       "effect": "ball_recovery",
-      "label": "+1球（每轮最多1次）"
+      "label": "回1球（无限制）"
     }
   ]
 }
