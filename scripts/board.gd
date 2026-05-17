@@ -287,8 +287,15 @@ func _on_upgrade_applied(upgrade: Dictionary) -> void:
 		# other types: no peg change needed
 
 func _on_round_started(round_index: int, _round_data: Dictionary) -> void:
-	var path := LAYOUT_PATHS[min(round_index, LAYOUT_PATHS.size() - 1)]
+	var idx := mini(round_index, LAYOUT_PATHS.size() - 1)
+	var path: String = LAYOUT_PATHS[idx]
 	layout = _load_json(path)
+	for slot in slot_nodes:
+		if is_instance_valid(slot):
+			slot.queue_free()
+	slot_nodes.clear()
+	generate_slots()
+	queue_redraw()
 	reset_pegs_for_round()
 
 func _add_upgrade_pegs(upgrade: Dictionary) -> void:
