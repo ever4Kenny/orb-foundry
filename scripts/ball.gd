@@ -39,8 +39,6 @@ var _death_progress: float = 0.0:
 	set(value):
 		_death_progress = value
 		queue_redraw()
-var _lifetime: float = 0.0
-var _stuck_timer: float = 0.0
 var _pierced_pegs: Array = []  # pegs already pierced (don't re-score)
 var _magnet_target_pos: Vector2 = Vector2.ZERO
 var _death_tween: Tween = null
@@ -142,7 +140,6 @@ func _physics_process(delta: float) -> void:
 	if not _alive or _dying:
 		return
 	
-	_lifetime += delta
 	
 	# Magnet effect
 	if ball_effect == BallEffect.MAGNET:
@@ -153,19 +150,6 @@ func _physics_process(delta: float) -> void:
 	if sp > MAX_SPEED:
 		linear_velocity = linear_velocity.normalized() * MAX_SPEED
 	
-	# General stuck detection: nearly stopped for > 1.5s anywhere
-	if sp < 10.0:
-		_stuck_timer += delta
-		if _stuck_timer > 1.5:
-			_die_naturally()
-			return
-	else:
-		_stuck_timer = 0.0
-	
-	# Stuck prevention: slow & near bottom
-	if sp < 20.0 and position.y > 900 and _lifetime > 2.0:
-		_die_naturally()
-		return
 	
 	# Fallen below slots — gap death (slots end at y≈1060, threshold before viewport bottom)
 	if position.y > 1070:
@@ -328,9 +312,6 @@ func die() -> void:
 	else:
 		hide()
 		set_collision_layer_value(1, false)
-
-func _die_naturally() -> void:
-	_start_death_animation(NATURAL_DEATH_DURATION, DeathVisual.NATURAL)
 
 func _die_through_gap() -> void:
 	_start_death_animation(GAP_DEATH_DURATION, DeathVisual.GAP)
