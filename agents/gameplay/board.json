@@ -1,123 +1,128 @@
 {
   "_meta": {
-    "version": "v2.1-locked-1",
+    "version": "v2.1-locked-2",
     "owner": "gameplay",
     "doc_ref": "mvp-plan-v2.1.md §3, §8",
-    "coord_system": "viewport 1080x1920 (portrait 9:16), origin top-left, y-down",
-    "play_area": {
-      "x_min": 60, "x_max": 1020,
-      "y_min": 320, "y_max": 1620
+    "supersedes": "v2.1-locked-1 (1080x1920 / 35 pegs / danger disappear) — rejected by 总监 2026-05-17",
+    "change_log_vs_locked_1": [
+      "尺寸 1080x1920 → 720x1080（沿用 v0.5 已验证手感）",
+      "peg 总数 35 → 102（保持现有 layout，避免双变量同改）",
+      "danger 改为 -20 消失 → 保持 -5 不消失（保护 R1/B2/B6 设计意义）",
+      "坐标系由绝对像素改为比例式，与 godot/resources/board_layouts/default.json 一致"
+    ],
+    "reference_layout": "godot/resources/board_layouts/default.json"
+  },
+
+  "board_width": 720,
+  "board_height": 1080,
+  "peg_radius": 7,
+  "ball_radius": 12,
+
+  "_layout_note": "12 行 × 8/9 交错栅格 = 102 颗。比例坐标系（0~1）便于美术 / UI 缩放。",
+
+  "peg_rows": [0.12, 0.18, 0.23, 0.29, 0.35, 0.41, 0.46, 0.52, 0.58, 0.64, 0.69, 0.75],
+  "peg_cols": [8, 9, 8, 9, 8, 9, 8, 9, 8, 9, 8, 9],
+
+  "peg_distribution_v2_1": {
+    "total": 102,
+    "normal": 72,
+    "bonus": 15,
+    "danger": 15,
+    "ratio_actual": "70.6 / 14.7 / 14.7",
+    "ratio_target": "70 / 15 / 15",
+    "_allocation_note": "由小码在生成器中按 stable seed 随机分布；bonus 倾向中下部（更易触发 R5 / B1 / B3），danger 倾向上部与边缘"
+  },
+
+  "peg_types": {
+    "normal": {
+      "color": "#666666",
+      "score": 10,
+      "disappear": true,
+      "tags": ["normal"]
     },
-    "ui_reserve": {
-      "top": "0~320 (score / relic bar / combo)",
-      "bottom": "1620~1920 (slots + launcher)"
+    "bonus": {
+      "color": "#ffaa00",
+      "score": 30,
+      "score_with_R2": 45,
+      "disappear": true,
+      "tags": ["bonus", "metal"],
+      "_change_from_default": "score 25 → 30，与 v2.1 config-proposal §2 对齐"
+    },
+    "danger": {
+      "color": "#cc3333",
+      "score": -5,
+      "speed_penalty": 0.8,
+      "disappear": false,
+      "tags": ["danger"],
+      "_hard_rule": "danger 永远不消失。R1 / B2 / B6 的设计依赖于这条心智模型，不要改。"
     }
   },
 
-  "peg_radius": 28,
-  "ball_radius": 32,
-  "grid": {
-    "rows": 8,
-    "row_spacing": 165,
-    "cols_per_row": [4, 5, 4, 5, 4, 5, 4, 4],
-    "stagger": "hex (odd rows offset by half-spacing)"
-  },
-
-  "peg_distribution": {
-    "total": 35,
-    "normal": 25,
-    "bonus": 5,
-    "danger": 5,
-    "ratio_note": "70/15/15 of 35 → 24.5/5.25/5.25 → rounded to 25/5/5"
-  },
-
-  "pegs": [
-    {"id": "p01", "row": 0, "col": 0, "x": 180,  "y": 320,  "type": "normal"},
-    {"id": "p02", "row": 0, "col": 1, "x": 420,  "y": 320,  "type": "bonus"},
-    {"id": "p03", "row": 0, "col": 2, "x": 660,  "y": 320,  "type": "normal"},
-    {"id": "p04", "row": 0, "col": 3, "x": 900,  "y": 320,  "type": "normal"},
-
-    {"id": "p05", "row": 1, "col": 0, "x": 120,  "y": 485,  "type": "normal"},
-    {"id": "p06", "row": 1, "col": 1, "x": 360,  "y": 485,  "type": "normal"},
-    {"id": "p07", "row": 1, "col": 2, "x": 540,  "y": 485,  "type": "danger"},
-    {"id": "p08", "row": 1, "col": 3, "x": 720,  "y": 485,  "type": "normal"},
-    {"id": "p09", "row": 1, "col": 4, "x": 960,  "y": 485,  "type": "normal"},
-
-    {"id": "p10", "row": 2, "col": 0, "x": 180,  "y": 650,  "type": "normal"},
-    {"id": "p11", "row": 2, "col": 1, "x": 420,  "y": 650,  "type": "normal"},
-    {"id": "p12", "row": 2, "col": 2, "x": 660,  "y": 650,  "type": "bonus"},
-    {"id": "p13", "row": 2, "col": 3, "x": 900,  "y": 650,  "type": "normal"},
-
-    {"id": "p14", "row": 3, "col": 0, "x": 120,  "y": 815,  "type": "danger"},
-    {"id": "p15", "row": 3, "col": 1, "x": 360,  "y": 815,  "type": "normal"},
-    {"id": "p16", "row": 3, "col": 2, "x": 540,  "y": 815,  "type": "normal"},
-    {"id": "p17", "row": 3, "col": 3, "x": 720,  "y": 815,  "type": "normal"},
-    {"id": "p18", "row": 3, "col": 4, "x": 960,  "y": 815,  "type": "danger"},
-
-    {"id": "p19", "row": 4, "col": 0, "x": 180,  "y": 980,  "type": "normal"},
-    {"id": "p20", "row": 4, "col": 1, "x": 420,  "y": 980,  "type": "bonus"},
-    {"id": "p21", "row": 4, "col": 2, "x": 660,  "y": 980,  "type": "normal"},
-    {"id": "p22", "row": 4, "col": 3, "x": 900,  "y": 980,  "type": "normal"},
-
-    {"id": "p23", "row": 5, "col": 0, "x": 120,  "y": 1145, "type": "normal"},
-    {"id": "p24", "row": 5, "col": 1, "x": 360,  "y": 1145, "type": "normal"},
-    {"id": "p25", "row": 5, "col": 2, "x": 540,  "y": 1145, "type": "bonus"},
-    {"id": "p26", "row": 5, "col": 3, "x": 720,  "y": 1145, "type": "normal"},
-    {"id": "p27", "row": 5, "col": 4, "x": 960,  "y": 1145, "type": "danger"},
-
-    {"id": "p28", "row": 6, "col": 0, "x": 180,  "y": 1310, "type": "normal"},
-    {"id": "p29", "row": 6, "col": 1, "x": 420,  "y": 1310, "type": "normal"},
-    {"id": "p30", "row": 6, "col": 2, "x": 660,  "y": 1310, "type": "danger"},
-    {"id": "p31", "row": 6, "col": 3, "x": 900,  "y": 1310, "type": "normal"},
-
-    {"id": "p32", "row": 7, "col": 0, "x": 240,  "y": 1475, "type": "normal"},
-    {"id": "p33", "row": 7, "col": 1, "x": 480,  "y": 1475, "type": "bonus"},
-    {"id": "p34", "row": 7, "col": 2, "x": 720,  "y": 1475, "type": "normal"},
-    {"id": "p35", "row": 7, "col": 3, "x": 960,  "y": 1475, "type": "normal"}
-  ],
-
-  "peg_score": {
-    "normal": 10,
-    "bonus": 30,
-    "danger": -20,
-    "_note": "danger 命中后球速 ×0.9（一次性）"
-  },
-
-  "peg_destruction": {
-    "mode": "destroy_on_hit",
-    "_note": "命中后 peg 消失（本关内不再生效）；不破坏 = combo 飙升 + 出关后保留密度，但破坏式更直观、首版选这个"
+  "_peg_types_v2_1_removed": {
+    "explosion": "v2.1 不使用 round_config.json 里的 explosion 钉子机制（chain 玩法已被 relic + 改造替代）。小码生成 board 时跳过 explosion 类型。"
   },
 
   "slots": [
     {
-      "id": "slot_left",
-      "x_min": 60, "x_max": 380, "y": 1700,
+      "position": "left",
+      "x_ratio": 0.15,
+      "y_offset": -36,
+      "width": 132,
+      "height": 32,
+      "effect": "ball_bonus",
+      "effect_params": {
+        "elasticity_delta": 0.10,
+        "duration": "next_ball"
+      },
       "score": 0,
-      "effect": {"type": "ball_bonus", "elasticity_delta": 0.10, "duration": "next_ball"},
-      "label": "弹性 +10%"
+      "label": "弹性 +10%（下一颗球）",
+      "_change_from_default": "原 score_multiplier ×1.5 改为 ball_bonus 弹性 +10%，与 v2.1 设计对齐"
     },
     {
-      "id": "slot_mid",
-      "x_min": 380, "x_max": 700, "y": 1700,
+      "position": "center",
+      "x_ratio": 0.50,
+      "y_offset": -36,
+      "width": 132,
+      "height": 32,
+      "effect": "score_bonus",
+      "effect_params": {
+        "value": 10,
+        "value_with_R5": 25
+      },
       "score": 10,
-      "effect": null,
-      "label": "+10 分（受 R5 影响 → +25）"
+      "label": "+10 分（R5 时 +25）",
+      "_change_from_default": "原 +50 分改为 +10 / R5 时覆盖为 +25（不是叠加）"
     },
     {
-      "id": "slot_right",
-      "x_min": 700, "x_max": 1020, "y": 1700,
+      "position": "right",
+      "x_ratio": 0.85,
+      "y_offset": -36,
+      "width": 132,
+      "height": 32,
+      "effect": "ball_recovery",
+      "effect_params": {
+        "count": 1,
+        "max_per_round": 1
+      },
       "score": 0,
-      "effect": {"type": "ball_refill", "count": 1},
-      "label": "回 1 球"
+      "label": "回 1 球（每轮最多 1 次）"
     }
   ],
 
   "walls": {
-    "left":  {"x": 60,   "elasticity": 0.85},
-    "right": {"x": 1020, "elasticity": 0.85},
+    "left":  {"x_ratio": 0.0, "elasticity": 0.85},
+    "right": {"x_ratio": 1.0, "elasticity": 0.85},
     "_note": "B5 镜面边墙时 elasticity → 1.0"
   },
 
   "gravity": 980,
-  "physics_substeps_per_frame": 4
+  "physics_substeps_per_frame": 4,
+
+  "_compat_with_round_config": {
+    "round_1_target": 600,
+    "round_2_target": 800,
+    "round_3_target": 1000,
+    "cumulative": [600, 1400, 2400],
+    "_note": "round_config.json 的 target_score 字段是累计口径，已与 v2.1 文档一致（600/1400/2400）。本字段仅为交叉校验。"
+  }
 }
