@@ -70,8 +70,6 @@ func _on_body_entered(body: Node) -> void:
 			ScoreManager.add(base_score)
 		"ball_bonus":
 			ScoreManager.next_elasticity_boost += 0.10
-		"next_round_score_multiplier":
-			ScoreManager.next_round_score_multiplier = 1.5
 		"score_multiplier":
 			ScoreManager.next_score_multiplier = 1.5
 		"ball_recovery":

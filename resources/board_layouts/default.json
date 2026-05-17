@@ -152,9 +152,8 @@
       "y_offset": -36,
       "width": 132,
       "height": 32,
-      "effect": "next_round_score_multiplier",
-      "multiplier": 1.5,
-      "label": "下一轮得分×1.5"
+      "effect": "score_multiplier",
+      "label": "×1.5 下一球（本轮）"
     },
     {
       "position": "center",

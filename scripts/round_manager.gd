@@ -86,6 +86,9 @@ func get_round_data() -> Dictionary:
 	return {}
 
 func end_round() -> void:
+	# 跨轮不继承单球 buff
+	ScoreManager.next_score_multiplier = 1.0
+	ScoreManager.next_elasticity_boost = 0.0
 	var passed = ScoreManager.get_score() >= get_target_score()
 	round_ended.emit(current_round, passed)
 	if not passed:
