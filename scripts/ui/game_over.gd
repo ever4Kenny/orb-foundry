@@ -11,7 +11,7 @@ func _ready() -> void:
 func _build_panel() -> void:
 	var panel := VBoxContainer.new()
 	panel.name = "Panel"
-	panel.position = Vector2(880, 400)
+	panel.position = Vector2(750, 400)
 	panel.custom_minimum_size = Vector2(420, 240)
 	add_child(panel)
 

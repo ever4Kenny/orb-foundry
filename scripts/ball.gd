@@ -172,12 +172,12 @@ func _physics_process(delta: float) -> void:
 		_die_through_gap()
 		return
 	
-	# Board edge bounce (board is 720×1080, ball in board-local coords)
+	# Board edge bounce (board is 1080×1080, ball in board-local coords)
 	if position.x - ball_radius < 0:
 		position.x = ball_radius
 		linear_velocity.x = abs(linear_velocity.x) * wall_elasticity
-	if position.x + ball_radius > 720:
-		position.x = 720 - ball_radius
+	if position.x + ball_radius > 1080:
+		position.x = 1080 - ball_radius
 		linear_velocity.x = -abs(linear_velocity.x) * wall_elasticity
 	if position.y - ball_radius < 30:
 		position.y = 30 + ball_radius

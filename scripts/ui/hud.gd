@@ -32,7 +32,7 @@ func _build_combo_label() -> void:
 	_combo_label.add_theme_font_size_override("font_size", 36)
 	_combo_label.add_theme_color_override("font_color", Color("#ffcc33"))
 	_combo_label.set_anchors_and_offsets_preset(Control.PRESET_TOP_RIGHT)
-	_combo_label.position = Vector2(1080 - 180, 60)
+	_combo_label.position = Vector2(1920 - 180, 60)
 	_combo_label.custom_minimum_size = Vector2(160, 48)
 	_combo_label.visible = false
 	add_child(_combo_label)
@@ -51,7 +51,7 @@ func hide_combo() -> void:
 func _build_relic_bar() -> void:
 	_relic_bar = HBoxContainer.new()
 	_relic_bar.name = "RelicBar"
-	_relic_bar.position = Vector2(40, 30)
+	_relic_bar.position = Vector2(1100, 30)
 	_relic_bar.add_theme_constant_override("separation", 12)
 	add_child(_relic_bar)
 
@@ -122,7 +122,7 @@ func _show_combo_toast() -> void:
 	toast.add_theme_font_size_override("font_size", 20)
 	toast.add_theme_color_override("font_color", Color("#ffcc33"))
 	toast.set_anchors_and_offsets_preset(Control.PRESET_CENTER_TOP)
-	toast.position = Vector2(540 - 160, 120)
+	toast.position = Vector2(960 - 160, 120)
 	toast.custom_minimum_size = Vector2(320, 36)
 	add_child(toast)
 	var tw := toast.create_tween()

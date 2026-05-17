@@ -39,7 +39,7 @@ func _load_ball_lookup() -> Dictionary:
 func _build_panel() -> void:
 	var panel := VBoxContainer.new()
 	panel.name = "Panel"
-	panel.position = Vector2(880, 160)
+	panel.position = Vector2(1180, 440)
 	panel.custom_minimum_size = Vector2(420, 360)
 	add_child(panel)
 

@@ -45,7 +45,7 @@ func _load_reward_balls() -> Array:
 func _build_panel() -> void:
 	var panel := VBoxContainer.new()
 	panel.name = "Panel"
-	panel.position = Vector2(880, 540)
+	panel.position = Vector2(750, 540)
 	panel.custom_minimum_size = Vector2(420, 320)
 	add_child(panel)
 

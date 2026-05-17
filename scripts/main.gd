@@ -42,7 +42,7 @@ func _ready() -> void:
 	RoundManager.round_started.connect(_on_round_started)
 	_reset_round_tracking()
 	board = BOARD_SCENE.instantiate()
-	board.position = Vector2(120, 0)
+	board.position = Vector2(0, 0)
 	add_child(board)
 	board.pegs_ready.connect(_on_pegs_ready)
 
@@ -86,7 +86,7 @@ func _unhandled_input(event: InputEvent) -> void:
 	if selected_ball_id.is_empty():
 		return
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
-		if event.pressed and event.position.y < 260:
+		if event.pressed and event.position.y < 1080:
 			drag_start = event.position
 		elif not event.pressed and drag_start != Vector2.ZERO:
 			_launch_selected_ball(event.position)

@@ -25,15 +25,15 @@ func _build_panel() -> void:
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	title.add_theme_font_size_override("font_size", 28)
 	title.set_anchors_and_offsets_preset(Control.PRESET_CENTER_TOP)
-	title.position = Vector2(540 - 150, 260)
+	title.position = Vector2(960 - 150, 260)
 	title.custom_minimum_size = Vector2(300, 40)
 	add_child(title)
 
 	var container := HBoxContainer.new()
 	container.name = "CardContainer"
 	container.add_theme_constant_override("separation", 24)
-	# 3 cards × 200 + 2 gaps × 24 = 648; center at x=540 → left edge = 540 - 324 = 216
-	container.position = Vector2(216, 320)
+	# 3 cards × 200 + 2 gaps × 24 = 648; center at x=960 → left edge = 960 - 324 = 636
+	container.position = Vector2(636, 320)
 	add_child(container)
 
 	for i in range(_options.size()):

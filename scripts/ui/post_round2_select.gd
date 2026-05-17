@@ -35,13 +35,13 @@ func _build_ui() -> void:
 	_title_label = Label.new()
 	_title_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_title_label.add_theme_font_size_override("font_size", 26)
-	_title_label.position = Vector2(540 - 200, 240)
+	_title_label.position = Vector2(960 - 200, 240)
 	_title_label.custom_minimum_size = Vector2(400, 40)
 	add_child(_title_label)
 
 	_container = VBoxContainer.new()
 	_container.name = "Options"
-	_container.position = Vector2(540 - 210, 300)
+	_container.position = Vector2(960 - 210, 300)
 	_container.custom_minimum_size = Vector2(420, 400)
 	_container.add_theme_constant_override("separation", 12)
 	add_child(_container)

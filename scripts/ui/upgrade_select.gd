@@ -26,7 +26,7 @@ func _load_upgrades() -> Array:
 
 func _build_panel() -> void:
 	var panel := VBoxContainer.new()
-	panel.position = Vector2(880, 240)
+	panel.position = Vector2(750, 240)
 	panel.custom_minimum_size = Vector2(420, 260)
 	add_child(panel)
 

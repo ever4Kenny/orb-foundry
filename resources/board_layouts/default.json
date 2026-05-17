@@ -1,120 +1,68 @@
 {
-  "board_width": 720,
+  "board_width": 1080,
   "board_height": 1080,
   "peg_radius": 7,
   "patterns": [
     {
       "type": "arc",
-      "count": 12,
-      "center": [
-        0.5,
-        0.08
-      ],
-      "radius": 120,
-      "start_degrees": 20,
-      "end_degrees": 160
+      "count": 20,
+      "center": [0.5, 0.07],
+      "radius": 170,
+      "start_degrees": 12,
+      "end_degrees": 168
     },
     {
       "type": "line",
-      "count": 10,
-      "start": [
-        0.12,
-        0.15
-      ],
-      "end": [
-        0.35,
-        0.42
-      ]
+      "count": 18,
+      "start": [0.06, 0.10],
+      "end": [0.38, 0.46]
     },
     {
       "type": "line",
-      "count": 10,
-      "start": [
-        0.88,
-        0.15
-      ],
-      "end": [
-        0.65,
-        0.42
-      ]
+      "count": 18,
+      "start": [0.94, 0.10],
+      "end": [0.62, 0.46]
     },
     {
       "type": "block",
-      "rows": 4,
-      "cols": 7,
-      "start": [
-        0.22,
-        0.45
-      ],
-      "spacing": [
-        56,
-        38
-      ]
+      "rows": 6,
+      "cols": 10,
+      "start": [0.16, 0.40],
+      "spacing": [60, 38]
     },
     {
       "type": "arc",
-      "count": 14,
-      "center": [
-        0.5,
-        0.58
-      ],
-      "radius": 160,
-      "start_degrees": 200,
-      "end_degrees": 340
+      "count": 22,
+      "center": [0.5, 0.55],
+      "radius": 220,
+      "start_degrees": 192,
+      "end_degrees": 348
     },
     {
       "type": "stagger",
-      "rows": [
-        0.72,
-        0.78,
-        0.84
-      ],
-      "cols": [
-        4,
-        4,
-        4
-      ],
+      "rows": [0.66, 0.72, 0.78, 0.84, 0.90],
+      "cols": [5, 5, 5, 5, 5],
       "x_min_ratio": 0.04,
       "x_max_ratio": 0.38
     },
     {
       "type": "stagger",
-      "rows": [
-        0.72,
-        0.78,
-        0.84
-      ],
-      "cols": [
-        4,
-        4,
-        4
-      ],
+      "rows": [0.66, 0.72, 0.78, 0.84, 0.90],
+      "cols": [5, 5, 5, 5, 5],
       "x_min_ratio": 0.62,
       "x_max_ratio": 0.96
     },
     {
       "type": "line",
-      "count": 6,
-      "start": [
-        0.35,
-        0.75
-      ],
-      "end": [
-        0.42,
-        0.88
-      ]
+      "count": 10,
+      "start": [0.34, 0.70],
+      "end": [0.43, 0.92]
     },
     {
       "type": "line",
-      "count": 6,
-      "start": [
-        0.65,
-        0.75
-      ],
-      "end": [
-        0.58,
-        0.88
-      ]
+      "count": 10,
+      "start": [0.66, 0.70],
+      "end": [0.57, 0.92]
     }
   ],
   "peg_types": {
@@ -122,26 +70,19 @@
       "color": "#666666",
       "score": 10,
       "disappear": true,
-      "tags": [
-        "normal"
-      ]
+      "tags": ["normal"]
     },
     "bonus": {
       "color": "#ffaa00",
       "score": 30,
       "disappear": true,
-      "tags": [
-        "bonus",
-        "metal"
-      ]
+      "tags": ["bonus", "metal"]
     },
     "danger": {
       "color": "#cc3333",
       "score": -5,
       "disappear": false,
-      "tags": [
-        "danger"
-      ],
+      "tags": ["danger"],
       "speed_penalty": 0.8
     }
   },
