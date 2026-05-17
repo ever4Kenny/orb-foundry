@@ -256,8 +256,8 @@ func reset_pegs_for_round() -> void:
 			peg.queue_free()
 	peg_nodes.clear()
 	generate_pegs()
-	if RoundManager.upgrade_chosen is Dictionary:
-		_on_upgrade_applied(RoundManager.upgrade_chosen)
+	for upgrade in RoundManager.upgrades_chosen:
+		_on_upgrade_applied(upgrade)
 
 func get_peg_count() -> int:
 	var count := 0

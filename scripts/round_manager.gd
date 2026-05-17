@@ -12,7 +12,7 @@ enum GameState { IDLE, RELIC_SELECT, ROUND_ENTRY, PLAYING, BALL_SELECT, REWARD_S
 
 var current_round: int = 0
 var shots_left: int = 0
-var upgrade_chosen = null  # upgrade config dict
+var upgrades_chosen: Array = []
 var state: GameState = GameState.IDLE
 var _rounds_data: Array = []
 
@@ -34,7 +34,7 @@ func _load_json(path: String):
 
 func reset() -> void:
 	current_round = 0
-	upgrade_chosen = null
+	upgrades_chosen.clear()
 	ScoreManager.reset()
 	BallBag.reset()
 	RelicManager.reset()
@@ -101,7 +101,7 @@ func end_round() -> void:
 		game_over.emit(true, ScoreManager.get_score())
 
 func apply_upgrade(upgrade: Dictionary) -> void:
-	upgrade_chosen = upgrade
+	upgrades_chosen.append(upgrade)
 	if str(upgrade.get("type", "")) == "blast_radius":
 		ScoreManager.blast_radius_multiplier = float(upgrade.get("radius_multiplier", 1.0))
 	upgrade_applied.emit(upgrade)
