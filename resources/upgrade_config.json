@@ -1,38 +1,40 @@
 {
   "upgrades": [
     {
-      "id": "metal_coating",
+      "id": "B1_metal_coating",
       "name": "金属镀层",
-      "desc": "下一轮盘面中部增加4颗奖励钉",
+      "desc": "下一轮盘面中部增加 4 颗奖励钉",
       "type": "add_pegs",
       "peg_type": "bonus",
-      "count": 4,
-      "region": "center"
+      "count": 4
     },
     {
-      "id": "danger_clear",
+      "id": "B2_danger_clear",
       "name": "危险清除",
       "desc": "下一轮清除全部红钉与等量灰钉",
       "type": "remove_pegs",
       "peg_type": "danger",
-      "also_remove": "normal",
-      "ratio": "1:1"
+      "also_remove": "normal"
     },
     {
-      "id": "bigger_blast",
+      "id": "B3_bigger_blast",
       "name": "爆炸增强",
-      "type": "blast_radius",
-      "radius_multiplier": 1.4,
-      "desc": "下一轮起爆炸半径提升40%"
+      "desc": "玻璃球分裂后子球存活时间 +2 秒",
+      "type": "split_lifetime_bonus",
+      "bonus_ms": 2000
     },
     {
-      "id": "more_explosives",
-      "name": "更多炸药",
-      "type": "add_pegs",
-      "peg_type": "explosion",
-      "count": 3,
-      "desc": "下一轮盘面增加3颗爆炸钉"
+      "id": "B4_elasticity_up",
+      "name": "弹性强化",
+      "desc": "下一轮所有球弹性 +0.15",
+      "type": "global_elasticity_bonus",
+      "delta": 0.15
     }
   ],
-  "reward_balls": ["iron", "crystal", "glass"]
+  "reward_balls": [
+    "iron",
+    "crystal",
+    "magnet",
+    "glass"
+  ]
 }

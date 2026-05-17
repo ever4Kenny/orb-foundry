@@ -1,6 +1,8 @@
 extends Node2D
 
 const START_RELIC_SELECT_SCENE := preload("res://scenes/ui/start_relic_select.tscn")
+const POST_ROUND1_SELECT_SCENE := preload("res://scenes/ui/post_round1_select.tscn")
+const POST_ROUND2_SELECT_SCENE := preload("res://scenes/ui/post_round2_select.tscn")
 const BOARD_SCENE := preload("res://scenes/board.tscn")
 const HUD_SCENE := preload("res://scenes/ui/hud.tscn")
 const BALL_SELECT_SCENE := preload("res://scenes/ui/ball_select.tscn")
@@ -57,6 +59,9 @@ func _ready() -> void:
 
 	var start_relic_select := START_RELIC_SELECT_SCENE.instantiate()
 	add_child(start_relic_select)
+
+	add_child(POST_ROUND1_SELECT_SCENE.instantiate())
+	add_child(POST_ROUND2_SELECT_SCENE.instantiate())
 
 	var ball_select := BALL_SELECT_SCENE.instantiate()
 	ball_select.ball_selected.connect(_on_ball_selected)

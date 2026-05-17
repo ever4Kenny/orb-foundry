@@ -8,7 +8,7 @@ signal round_ended(round_index: int, passed: bool)
 signal upgrade_applied(upgrade: Dictionary)
 signal game_over(won: bool, final_score: int)
 
-enum GameState { IDLE, RELIC_SELECT, ROUND_ENTRY, PLAYING, BALL_SELECT, REWARD_SELECT, UPGRADE_SELECT, GAME_OVER }
+enum GameState { IDLE, RELIC_SELECT, ROUND_ENTRY, PLAYING, BALL_SELECT, REWARD_SELECT, UPGRADE_SELECT, POST_ROUND1_SELECT, POST_ROUND2_SELECT, GAME_OVER }
 
 var current_round: int = 0
 var shots_left: int = 0
@@ -93,9 +93,9 @@ func end_round() -> void:
 		game_over.emit(false, ScoreManager.get_score())
 		return
 	if current_round == 0:
-		state = GameState.REWARD_SELECT
+		state = GameState.POST_ROUND1_SELECT
 	elif current_round == 1:
-		state = GameState.UPGRADE_SELECT
+		state = GameState.POST_ROUND2_SELECT
 	else:
 		state = GameState.GAME_OVER
 		game_over.emit(true, ScoreManager.get_score())

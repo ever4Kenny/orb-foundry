@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://post_round2_select"]
+
+[ext_resource type="Script" path="res://scripts/ui/post_round2_select.gd" id="1"]
+
+[node name="PostRound2Select" type="CanvasLayer"]
+script = ExtResource("1")
