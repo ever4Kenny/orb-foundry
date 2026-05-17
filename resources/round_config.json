@@ -3,29 +3,29 @@
     {
       "id": 1,
       "name": "第1轮",
-      "target_score": 600,
+      "target_score": 1000,
       "ball_count": 4,
       "mechanic": "combo",
-      "bonus_peg_count": 15,
-      "danger_peg_count": 15
+      "bonus_peg_count": 31,
+      "danger_peg_count": 31
     },
     {
       "id": 2,
       "name": "第2轮",
-      "target_score": 1400,
+      "target_score": 2300,
       "ball_count": 5,
       "mechanic": "combo",
-      "bonus_peg_count": 15,
-      "danger_peg_count": 15
+      "bonus_peg_count": 31,
+      "danger_peg_count": 31
     },
     {
       "id": 3,
       "name": "第3轮",
-      "target_score": 2400,
+      "target_score": 4000,
       "ball_count": 5,
       "mechanic": "combo",
-      "bonus_peg_count": 15,
-      "danger_peg_count": 15
+      "bonus_peg_count": 31,
+      "danger_peg_count": 31
     }
   ]
 }
