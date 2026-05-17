@@ -7,6 +7,7 @@ extends StaticBody2D
 @export var peg_tags: Array[String] = ["normal"]
 @export var peg_radius: float = 12.0
 @export var alive: bool = true
+@export var can_die: bool = false  # danger peg: set true by B6
 
 var _color_normal: Color = Color("#666666")
 var _color_bonus: Color = Color("#ffaa00")
@@ -91,7 +92,7 @@ func _on_body_entered(body: Node) -> void:
 	var hit_result = body.on_peg_hit(peg_type, peg_tags, self)
 	if hit_result:
 		RelicManager._dispatch("onPegHit", {"peg_type": peg_type, "peg_tags": peg_tags, "ball_node": body, "peg_node": self})
-		if peg_type != "danger":
+		if peg_type != "danger" or can_die:
 			alive = false
 			collision_layer = 0
 		if peg_type != "explosion":

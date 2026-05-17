@@ -390,6 +390,10 @@ func _apply_blood_board(upgrade: Dictionary) -> void:
 			if new_pos.x > 20 and new_pos.x < board_width - 20 and new_pos.y > 20 and new_pos.y < board_height - 60:
 				_create_peg(new_pos, "danger")
 				added += 1
+	# B6: danger peg 可被击中消失
+	for peg in peg_nodes:
+		if is_instance_valid(peg) and str(peg.get("peg_type")) == "danger":
+			peg.set("can_die", true)
 	# Register clear_bonus trigger
 	_blood_danger_nodes.clear()
 	for peg in peg_nodes:
