@@ -62,7 +62,7 @@ func get_center_slot_score(base: int) -> int:
 	for relic in active_relics:
 		var effect: Dictionary = relic.get("effect", {})
 		if str(effect.get("type", "")) == "score_override":
-			return base + int(effect.get("value", 0))
+			return int(effect.get("value", 0))
 	return base
 
 func _dispatch(trigger_name: String, payload: Dictionary) -> void:

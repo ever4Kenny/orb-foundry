@@ -37,6 +37,7 @@ func reset() -> void:
 	upgrade_chosen = null
 	ScoreManager.reset()
 	BallBag.reset()
+	RelicManager.reset()
 	_load_config()
 	state = GameState.RELIC_SELECT
 
@@ -51,7 +52,7 @@ func start_round(ri: int) -> void:
 	current_round = ri
 	var rd = _rounds_data[ri]
 	shots_left = rd.get("ball_count", 4)
-	state = GameState.ROUND_ENTRY
+	state = GameState.BALL_SELECT
 	# Dispatch onRoundStart first (fills pending effects list);
 	# main.gd's _on_round_started handler will apply them after board is rebuilt.
 	RelicManager._dispatch("onRoundStart", {"round_index": ri, "round_data": rd})

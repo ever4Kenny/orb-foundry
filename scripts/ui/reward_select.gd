@@ -50,7 +50,7 @@ func _build_panel() -> void:
 	add_child(panel)
 
 	var title := Label.new()
-	title.text = "选择奖励弹珠"
+	title.text = "扩充球袋 — 选一颗加入球袋"
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	panel.add_child(title)
 
