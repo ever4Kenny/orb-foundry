@@ -9,6 +9,7 @@ var option_buttons: Array[Button] = []
 var drawn_entries: Array = []
 var bag_label: Label
 var _option_panel: Node
+var _reroll_button: Button
 
 func _ready() -> void:
 	ball_lookup = _load_ball_lookup()
@@ -53,6 +54,15 @@ func _build_panel() -> void:
 
 	# Stage 2: button count is dynamic; managed by _ensure_buttons() inside _draw_options
 	_option_panel = panel
+
+	# T6: reroll button
+	var reroll_btn := Button.new()
+	reroll_btn.name = "RerollBtn"
+	reroll_btn.custom_minimum_size = Vector2(420, 48)
+	reroll_btn.pressed.connect(_on_reroll_pressed)
+	panel.add_child(reroll_btn)
+	_reroll_button = reroll_btn
+	_refresh_reroll_button()
 
 func _ensure_buttons(n: int) -> void:
 	# Grow
@@ -124,3 +134,15 @@ func _on_option_pressed(index: int) -> void:
 	else:
 		push_error("Failed to use ball: " + ball_id)
 		_draw_options()
+
+func _on_reroll_pressed() -> void:
+	if BallBag.reroll():
+		_draw_options()
+		_refresh_reroll_button()
+
+func _refresh_reroll_button() -> void:
+	if _reroll_button == null:
+		return
+	var n := BallBag.reroll_remaining
+	_reroll_button.text = "重投候选（剩余 %d 次）" % n
+	_reroll_button.disabled = n <= 0

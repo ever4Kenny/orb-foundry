@@ -144,7 +144,7 @@ func _on_pegs_ready() -> void:
 func _reset_round_tracking() -> void:
 	_round_score_start = ScoreManager.get_score()
 	_round_peg_hits = 0
-	_round_combo_enabled = str(RoundManager.get_round_data().get("mechanic", "")) == "combo"
+	_round_combo_enabled = true  # v2.1: combo is always active
 	_round_combo_max = 0
 	_round_combo_bonus_total = 0
 
@@ -158,7 +158,7 @@ func _launch_selected_ball(release_position: Vector2) -> void:
 	# Reset per-shot tracking
 	_shot_score_start = ScoreManager.get_score()
 	_shot_peg_hits = 0
-	_shot_combo_enabled = str(RoundManager.get_round_data().get("mechanic", "")) == "combo"
+	_shot_combo_enabled = true  # v2.1: combo is always active
 	_shot_combo_max = 0
 	_shot_combo_bonus_total = 0
 	_shot_balls.clear()
@@ -205,6 +205,14 @@ func _on_ball_combo_updated(combo_count: int, ball: Node) -> void:
 	if not is_instance_valid(ball):
 		return
 	_spawn_combo_text(ball.global_position, combo_count)
+	var hud = get_node_or_null("CanvasLayer")  # HUD is first CanvasLayer child
+	if hud == null:
+		for child in get_children():
+			if child.has_method("show_combo"):
+				hud = child
+				break
+	if hud != null and hud.has_method("show_combo"):
+		hud.show_combo(combo_count)
 
 func _spawn_combo_text(world_position: Vector2, combo_count: int) -> void:
 	if _combo_layer == null:
@@ -245,6 +253,10 @@ func _on_ball_exiting(ball: Node) -> void:
 
 func _show_shot_feedback() -> void:
 	_shot_feedback_showing = true
+	for child in get_children():
+		if child.has_method("hide_combo"):
+			child.hide_combo()
+			break
 	var score_gained := ScoreManager.get_score() - _shot_score_start
 	var combo_max := _shot_combo_max if _shot_combo_enabled else 0
 	var combo_bonus := _shot_combo_bonus_total if _shot_combo_enabled else 0

@@ -9,6 +9,8 @@ extends CanvasLayer
 
 # Stage 2: active relic bar (top-left)
 var _relic_bar: HBoxContainer
+# T8: combo multiplier display
+var _combo_label: Label
 const RELIC_EMOJI := {
 	"R1": "🔥", "R2": "💎", "R3": "🎒", "R4": "🧊", "R5": "⚖️", "R6": "🧲"
 }
@@ -17,10 +19,34 @@ func _ready() -> void:
 	ScoreManager.score_changed.connect(_on_score_changed)
 	RoundManager.round_started.connect(_on_round_started)
 	BallBag.bag_changed.connect(_on_bag_changed)
+	_build_combo_label()
 	_build_relic_bar()
 	RelicManager.relic_activated.connect(_on_relic_activated)
 	_rebuild_relic_bar_from_active()
 	_refresh()
+
+func _build_combo_label() -> void:
+	_combo_label = Label.new()
+	_combo_label.name = "ComboLabel"
+	_combo_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	_combo_label.add_theme_font_size_override("font_size", 36)
+	_combo_label.add_theme_color_override("font_color", Color("#ffcc33"))
+	_combo_label.set_anchors_and_offsets_preset(Control.PRESET_TOP_RIGHT)
+	_combo_label.position = Vector2(1080 - 180, 60)
+	_combo_label.custom_minimum_size = Vector2(160, 48)
+	_combo_label.visible = false
+	add_child(_combo_label)
+
+func show_combo(count: int) -> void:
+	if _combo_label == null:
+		return
+	var mul := 1.0 + 0.1 * (count - 1)
+	_combo_label.text = "×%.1f" % mul
+	_combo_label.visible = true
+
+func hide_combo() -> void:
+	if _combo_label != null:
+		_combo_label.visible = false
 
 func _build_relic_bar() -> void:
 	_relic_bar = HBoxContainer.new()
@@ -61,8 +87,10 @@ func _append_relic_card(relic: Dictionary) -> void:
 func _on_score_changed(_new_score: int, _delta: int) -> void:
 	_refresh()
 
-func _on_round_started(_round_index: int, _round_data: Dictionary) -> void:
+func _on_round_started(round_index: int, _round_data: Dictionary) -> void:
 	_refresh()
+	if round_index == 0:
+		_show_combo_toast()
 
 func _on_bag_changed(_available_balls: Array) -> void:
 	_refresh()
@@ -85,3 +113,19 @@ func _update_multiplier_label() -> void:
 		multiplier_label.text = "×%.1f 就绪" % ScoreManager.next_score_multiplier
 	else:
 		multiplier_label.text = ""
+
+# T7: 首关 combo toast（2 秒后自动消失）
+func _show_combo_toast() -> void:
+	var toast := Label.new()
+	toast.text = "连续命中可叠加倍率"
+	toast.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	toast.add_theme_font_size_override("font_size", 20)
+	toast.add_theme_color_override("font_color", Color("#ffcc33"))
+	toast.set_anchors_and_offsets_preset(Control.PRESET_CENTER_TOP)
+	toast.position = Vector2(540 - 160, 120)
+	toast.custom_minimum_size = Vector2(320, 36)
+	add_child(toast)
+	var tw := toast.create_tween()
+	tw.tween_interval(1.5)
+	tw.tween_property(toast, "modulate:a", 0.0, 0.5)
+	tw.finished.connect(toast.queue_free)
