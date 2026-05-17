@@ -393,7 +393,7 @@ func _apply_blood_board(upgrade: Dictionary) -> void:
 	# B6: danger peg 可被击中消失
 	for peg in peg_nodes:
 		if is_instance_valid(peg) and str(peg.get("peg_type")) == "danger":
-			peg.set("can_die", true)
+			peg.can_die = true
 	# Register clear_bonus trigger
 	_blood_danger_nodes.clear()
 	for peg in peg_nodes:
