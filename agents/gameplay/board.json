@@ -154,10 +154,10 @@
       "y_offset": -36,
       "width": 132,
       "height": 32,
-      "effect": "ball_bonus",
-      "effect_params": {"elasticity_delta": 0.10, "duration": "next_ball"},
+      "effect": "next_round_score_multiplier",
+      "effect_params": {"multiplier": 1.5, "duration": "next_round"},
       "score": 0,
-      "label": "弹性 +10%"
+      "label": "下一轮得分 ×1.5"
     },
     {
       "position": "center",
@@ -166,9 +166,9 @@
       "width": 132,
       "height": 32,
       "effect": "score_bonus",
-      "effect_params": {"value": 10, "value_with_R5": 25},
-      "score": 10,
-      "label": "+10 分（R5 覆盖 +25）"
+      "effect_params": {"value": 50},
+      "score": 50,
+      "label": "+50 分"
     },
     {
       "position": "right",
@@ -177,9 +177,13 @@
       "width": 132,
       "height": 32,
       "effect": "ball_recovery",
-      "effect_params": {"count": 1, "max_per_round": 1},
+      "effect_params": {
+        "count": 1,
+        "max_per_round": -1,
+        "_note": "max_per_round=-1 表示无上限。玻璃球分裂的 2 个子球都进右槽 = 触发 2 次 = 回 2 球"
+      },
       "score": 0,
-      "label": "回 1 球（每轮限 1 次）"
+      "label": "回 1 球（无次数限制）"
     }
   ],
 
