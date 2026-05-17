@@ -184,7 +184,8 @@ func _launch_selected_ball(release_position: Vector2) -> void:
 
 	board.add_child(ball)
 
-	RelicManager._dispatch("onBallLaunched", {"ball_node": ball})
+	ball.wall_elasticity = ScoreManager.wall_elasticity
+	RelicManager._dispatch("onBallLaunch", {"ball_node": ball})
 
 	var direction := release_position - drag_start
 	if direction.length() < 20.0:

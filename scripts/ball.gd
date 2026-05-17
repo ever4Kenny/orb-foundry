@@ -31,6 +31,7 @@ const GAP_DEATH_DURATION := 0.3
 @export var score_multiplier: float = 1.0
 @export var combo_enabled: bool = false
 @export var blast_radius: float = 80.0
+@export var wall_elasticity: float = 0.5
 
 var _alive: bool = true
 var _dying: bool = false
@@ -174,10 +175,10 @@ func _physics_process(delta: float) -> void:
 	# Board edge bounce (board is 720×1080, ball in board-local coords)
 	if position.x - ball_radius < 0:
 		position.x = ball_radius
-		linear_velocity.x = abs(linear_velocity.x) * 0.5
+		linear_velocity.x = abs(linear_velocity.x) * wall_elasticity
 	if position.x + ball_radius > 720:
 		position.x = 720 - ball_radius
-		linear_velocity.x = -abs(linear_velocity.x) * 0.5
+		linear_velocity.x = -abs(linear_velocity.x) * wall_elasticity
 	if position.y - ball_radius < 30:
 		position.y = 30 + ball_radius
 		linear_velocity.y = abs(linear_velocity.y) * 0.5

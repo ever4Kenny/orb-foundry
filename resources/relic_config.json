@@ -26,7 +26,7 @@
       "id": "R4",
       "name": "裂纹累积",
       "desc": "玻璃球分裂阈值 6 → 4 次碰撞",
-      "trigger": "onBallLaunched",
+      "trigger": "onBallLaunch",
       "effect": {"type": "glass_split_threshold", "value": 4}
     },
     {
@@ -41,7 +41,7 @@
       "id": "R6",
       "name": "磁极强化",
       "desc": "磁球吸附范围 ×1.5",
-      "trigger": "onBallLaunched",
+      "trigger": "onBallLaunch",
       "effect": {"type": "magnet_range_mul", "value": 1.5}
     }
   ]

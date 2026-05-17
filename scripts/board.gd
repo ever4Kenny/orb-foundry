@@ -9,6 +9,9 @@ const SLOT_SCRIPT := preload("res://scripts/slot.gd")
 var layout: Dictionary = {}
 var peg_nodes: Array[Node] = []
 var slot_nodes: Array[Node] = []
+var _blood_bonus_pending: bool = false
+var _blood_bonus_value: int = 0
+var _blood_danger_nodes: Array[Node] = []
 
 func _ready() -> void:
 	randomize()
@@ -275,7 +278,9 @@ func _on_upgrade_applied(upgrade: Dictionary) -> void:
 			_remove_pegs_pattern(upgrade)
 		"blood_board":
 			_apply_blood_board(upgrade)
-		# mirror_walls: handled at physics level, no peg change needed here
+		"mirror_walls":
+			ScoreManager.wall_elasticity = float(upgrade.get("elasticity", 1.0))
+		# other types: no peg change needed
 
 func _on_round_started(_round_index: int, _round_data: Dictionary) -> void:
 	reset_pegs_for_round()
@@ -353,6 +358,15 @@ func _remove_pegs_pattern(upgrade: Dictionary) -> void:
 			peg.die()
 			removed += 1
 
+func _process(_delta: float) -> void:
+	if not _blood_bonus_pending:
+		return
+	for peg in _blood_danger_nodes:
+		if is_instance_valid(peg) and peg.get("alive"):
+			return
+	_blood_bonus_pending = false
+	ScoreManager.add(_blood_bonus_value)
+
 # B6: 血色盘面 — danger peg 数量翻倍（重新生成时由 round_config 控制，此处直接在现有盘面追加）
 func _apply_blood_board(upgrade: Dictionary) -> void:
 	var factor := int(upgrade.get("danger_multiply", 2))
@@ -376,3 +390,10 @@ func _apply_blood_board(upgrade: Dictionary) -> void:
 			if new_pos.x > 20 and new_pos.x < board_width - 20 and new_pos.y > 20 and new_pos.y < board_height - 60:
 				_create_peg(new_pos, "danger")
 				added += 1
+	# Register clear_bonus trigger
+	_blood_danger_nodes.clear()
+	for peg in peg_nodes:
+		if is_instance_valid(peg) and str(peg.get("peg_type")) == "danger":
+			_blood_danger_nodes.append(peg)
+	_blood_bonus_value = int(upgrade.get("clear_bonus", 50))
+	_blood_bonus_pending = true

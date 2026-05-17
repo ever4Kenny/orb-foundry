@@ -11,6 +11,7 @@ var next_score_multiplier: float = 1.0
 var next_round_score_multiplier: float = 1.0
 var round_score_multiplier: float = 1.0
 var blast_radius_multiplier: float = 1.0
+var wall_elasticity: float = 0.5
 
 func reset() -> void:
 	score = 0
@@ -19,6 +20,7 @@ func reset() -> void:
 	next_round_score_multiplier = 1.0
 	round_score_multiplier = 1.0
 	blast_radius_multiplier = 1.0
+	wall_elasticity = 0.5
 	score_changed.emit(score, 0)
 
 func apply_round_multiplier() -> void:
