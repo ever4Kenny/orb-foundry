@@ -109,12 +109,13 @@
     "_note": "比 102 多 8 颗。如果小码觉得太密，优先从中部密集块减 1 行（-7）= 103。或者保持 110 也行——多 8 颗不影响目标分平衡（danger 比例不变）。"
   },
 
-  "peg_distribution": {
-    "total_target": 102,
-    "normal": 72,
-    "bonus": 15,
-    "danger": 15,
-    "ratio": "70/15/15",
+  "peg_distribution_v2_1": {
+    "total": 208,
+    "normal": 146,
+    "bonus": 31,
+    "danger": 31,
+    "ratio_actual": "70/15/15",
+    "board_size": "1080x1080",
     "placement_rules": {
       "bonus": "倾向中部密集块 + 中下弧形碗（高价值区域，奖励精准瞄准）",
       "danger": "倾向顶部皇冠弧边缘 + 左右斜线中段（自然球路上的持久威胁）",
