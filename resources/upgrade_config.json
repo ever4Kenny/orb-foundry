@@ -44,10 +44,10 @@
     {
       "id": "B6",
       "name": "血色盘面",
-      "desc": "危险 peg ×2，但全部击中后清空盘面 +50 分",
+        "desc": "危险 peg ×2，但全部击中后清空盘面 +300 分",
       "type": "blood_board",
       "danger_multiply": 2,
-      "clear_bonus": 50
+      "clear_bonus": 300
     }
   ],
   "reward_balls": [
