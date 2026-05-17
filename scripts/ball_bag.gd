@@ -11,6 +11,12 @@ var reroll_remaining: int = 2
 
 func _ready() -> void:
 	_load_config()
+	RoundManager.round_started.connect(_on_round_started)
+
+func _on_round_started(_round_index: int, _round_data: Dictionary) -> void:
+	for entry in _entries:
+		entry.used = false
+	emit_signal("bag_changed", get_available_ids())
 
 func _load_config() -> void:
 	var cfg = _load_json("res://resources/ball_config.json")
