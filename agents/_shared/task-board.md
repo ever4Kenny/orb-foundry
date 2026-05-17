@@ -5,8 +5,13 @@
 
 ## In Progress
 
-- [tech 小码] **阶段 2** In Progress：T2 Relic 6 effect + T4 起始 relic 三选一 UI（T4 提前，因 R1 验收依赖开局选 relic 入口）。
-- [art 小美] A6 整体 v2.1 可读性复核 — 待 D3（等 tech 实机）
+- [tech 小码] **T0（新增）** 横屏切换 1920×1080 + 盘面重排（阶段 2 前置，玩法验证前提）
+- [art 小美] A6 整体 v2.1 可读性复核 — 待实机验证
+
+## Done — Sprint v2.1 tech
+
+- [tech 小码] **阶段 1** T1 触发器框架 + RelicManager 骨架 ✓ commit 37c5d6f
+- [tech 小码] **阶段 2 部分** feat(relic): stage2 effect interpreters + active relic bar ✓ commit f377841
 
 ## Done — Sprint v2.1 art
 
@@ -22,8 +27,9 @@
 | 阶段 | 看板任务 | 说明 | 状态 |
 |---|---|---|---|
 | 阶段 1 | T1 | 触发器框架 + RelicManager 骨架（6 个 relic 仅 log，不接 effect） | ✅ Done — commit 37c5d6f，已 push |
-| 阶段 2 | T2 | 6 个 relic effect 实现 + 已激活栏 UI（A2 同步纳入） | 🟡 In Progress |
-| 阶段 3 | T4 / T5 / T10 / T11 | 起始 relic 三选一 + 第 2 关后 relic 三选一 + 第 1 关后双选页（球+改造）+ 第 2 关后双选页（relic+改造） | ⏳ Pending |
+| **阶段 2a** | **T0（新增）** | **横屏 1920×1080 + 盘面重排（玩法验证前提）** | 🟡 In Progress |
+| 阶段 2b | T2 + T4 | 6 个 relic effect + 已激活栏 UI + 起始 relic 三选一（含 R1 时序修复） | ⏳ Pending（等 T0） |
+| 阶段 3 | T5 / T10 / T11 | 第 2 关后 relic 三选一 + 第 1 关后双选页 + 第 2 关后双选页 | ⏳ Pending |
 | 阶段 4 | T3 / T9 | 改造池扩展 B3~B6 + JSON schema 升级 | ⏳ Pending |
 | 阶段 5 | T6 / T7 / T8 | 重投按钮 + 删除关前弹窗（加首关 toast）+ Combo 全关化 + 倍率实时显示 | ⏳ Pending |
 
