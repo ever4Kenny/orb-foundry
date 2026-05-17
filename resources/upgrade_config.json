@@ -3,7 +3,7 @@
     {
       "id": "metal_coating",
       "name": "金属镀层",
-      "desc": "盘面中部+4个奖励peg(金)",
+      "desc": "下一轮盘面中部增加4颗奖励钉",
       "type": "add_pegs",
       "peg_type": "bonus",
       "count": 4,
@@ -12,7 +12,7 @@
     {
       "id": "danger_clear",
       "name": "危险清除",
-      "desc": "移除所有红色危险peg + 等量灰色peg",
+      "desc": "下一轮清除全部红钉与等量灰钉",
       "type": "remove_pegs",
       "peg_type": "danger",
       "also_remove": "normal",
@@ -23,7 +23,7 @@
       "name": "爆炸增强",
       "type": "blast_radius",
       "radius_multiplier": 1.4,
-      "desc": "爆炸半径+40%"
+      "desc": "下一轮起爆炸半径提升40%"
     },
     {
       "id": "more_explosives",
@@ -31,7 +31,7 @@
       "type": "add_pegs",
       "peg_type": "explosion",
       "count": 3,
-      "desc": "盘面+3个爆炸peg"
+      "desc": "下一轮盘面增加3颗爆炸钉"
     }
   ],
   "reward_balls": ["iron", "crystal", "glass"]
