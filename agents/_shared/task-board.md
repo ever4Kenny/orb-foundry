@@ -10,8 +10,16 @@
 
 ## Done — Sprint v2.1 tech
 
-- [tech 小码] **阶段 1** T1 触发器框架 + RelicManager 骨架 ✓ commit 37c5d6f
-- [tech 小码] **阶段 2 部分** feat(relic): stage2 effect interpreters + active relic bar ✓ commit f377841
+- [tech 小码] **阶段 1** T1 触发器框架 + RelicManager 骨架 ✓ 37c5d6f
+- [tech 小码] **阶段 1** 赛后双选UI ✓ 9990072
+- [tech 小码] **阶段 2** B1~B6 升级池 ✓ 85f7c36
+- [tech 小码] **阶段 2** reroll/combo/HUD ✓ f161b6a
+- [tech 小码] **阶段 3** R4/R6/B5/B6 P0修复 ✓ 12a219d
+- [tech 小码] **阶段 4** upgrades_chosen Array ✓ dac89d2
+- [tech 小码] **阶段 4** 左槽×1.5 仅当球 ✓ f9312bb
+- [tech 小码] **阶段 5** B6 血色盘面完整实现 ✓ 5541336
+- [tech 小码] **P0 fixes** B6 clear_bonus 300 ✓ 560bef9
+- [tech 小码] **P0 fixes** B6 can_die 直接赋值修复 ✓ 45c43bd
 
 ## Done — Sprint v2.1 art
 
