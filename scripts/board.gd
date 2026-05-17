@@ -269,6 +269,13 @@ func _on_upgrade_applied(upgrade: Dictionary) -> void:
 			_add_upgrade_pegs(upgrade)
 		"remove_pegs":
 			_remove_upgrade_pegs(upgrade)
+		"add_pegs_pattern":
+			_add_pegs_pattern(upgrade)
+		"remove_pegs_pattern":
+			_remove_pegs_pattern(upgrade)
+		"blood_board":
+			_apply_blood_board(upgrade)
+		# mirror_walls: handled at physics level, no peg change needed here
 
 func _on_round_started(_round_index: int, _round_data: Dictionary) -> void:
 	reset_pegs_for_round()
@@ -307,3 +314,65 @@ func _remove_pegs_by_type(peg_type: String, max_count: int) -> int:
 		peg.die()
 		removed += 1
 	return removed
+
+# B3: 中心漏斗 — 9 个 bonus peg 在中下部 V 形排列
+func _add_pegs_pattern(upgrade: Dictionary) -> void:
+	var peg_type := str(upgrade.get("peg_type", "bonus"))
+	var board_width: float = layout.get("board_width", 720.0)
+	var board_height: float = layout.get("board_height", 1080.0)
+	var positions: Array[Vector2] = [
+		Vector2(board_width * 0.30, board_height * 0.62),
+		Vector2(board_width * 0.70, board_height * 0.62),
+		Vector2(board_width * 0.35, board_height * 0.68),
+		Vector2(board_width * 0.65, board_height * 0.68),
+		Vector2(board_width * 0.40, board_height * 0.74),
+		Vector2(board_width * 0.60, board_height * 0.74),
+		Vector2(board_width * 0.44, board_height * 0.80),
+		Vector2(board_width * 0.56, board_height * 0.80),
+		Vector2(board_width * 0.50, board_height * 0.84),
+	]
+	for pos in positions:
+		_create_peg(pos, peg_type)
+
+# B4: 双子通道 — 移除中部垂直走廊约 6 个 peg
+func _remove_pegs_pattern(upgrade: Dictionary) -> void:
+	var count := int(upgrade.get("count", 6))
+	var board_width: float = layout.get("board_width", 720.0)
+	var board_height: float = layout.get("board_height", 1080.0)
+	var cx := board_width * 0.50
+	var corridor_half := board_width * 0.08
+	var removed := 0
+	for peg in peg_nodes:
+		if removed >= count:
+			break
+		if not is_instance_valid(peg) or not peg.alive:
+			continue
+		var px: float = peg.position.x
+		var py: float = peg.position.y
+		if abs(px - cx) < corridor_half and py > board_height * 0.40 and py < board_height * 0.80:
+			peg.die()
+			removed += 1
+
+# B6: 血色盘面 — danger peg 数量翻倍（重新生成时由 round_config 控制，此处直接在现有盘面追加）
+func _apply_blood_board(upgrade: Dictionary) -> void:
+	var factor := int(upgrade.get("danger_multiply", 2))
+	var board_width: float = layout.get("board_width", 720.0)
+	var board_height: float = layout.get("board_height", 1080.0)
+	# 收集现有 danger peg 位置，在附近偏移处新增
+	var danger_positions: Array[Vector2] = []
+	for peg in peg_nodes:
+		if is_instance_valid(peg) and peg.alive and str(peg.get("peg_type")) == "danger":
+			danger_positions.append(peg.position)
+	var offset_dirs: Array[Vector2] = [Vector2(28, 0), Vector2(-28, 0), Vector2(0, 28)]
+	var added := 0
+	var target := danger_positions.size() * (factor - 1)
+	for base_pos in danger_positions:
+		if added >= target:
+			break
+		for dir in offset_dirs:
+			if added >= target:
+				break
+			var new_pos := base_pos + dir
+			if new_pos.x > 20 and new_pos.x < board_width - 20 and new_pos.y > 20 and new_pos.y < board_height - 60:
+				_create_peg(new_pos, "danger")
+				added += 1

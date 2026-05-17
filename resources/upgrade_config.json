@@ -1,34 +1,53 @@
 {
   "upgrades": [
     {
-      "id": "B1_metal_coating",
+      "id": "B1",
       "name": "金属镀层",
-      "desc": "下一轮盘面中部增加 4 颗奖励钉",
+      "desc": "盘面中部新增 4 个奖励 peg",
       "type": "add_pegs",
       "peg_type": "bonus",
-      "count": 4
+      "count": 4,
+      "region": "center"
     },
     {
-      "id": "B2_danger_clear",
+      "id": "B2",
       "name": "危险清除",
-      "desc": "下一轮清除全部红钉与等量灰钉",
+      "desc": "移除所有危险 peg（同时移除等量普通 peg）",
       "type": "remove_pegs",
       "peg_type": "danger",
       "also_remove": "normal"
     },
     {
-      "id": "B3_bigger_blast",
-      "name": "爆炸增强",
-      "desc": "玻璃球分裂后子球存活时间 +2 秒",
-      "type": "split_lifetime_bonus",
-      "bonus_ms": 2000
+      "id": "B3",
+      "name": "中心漏斗",
+      "desc": "盘面中下部新增 9 个奖励 peg 形成漏斗形",
+      "type": "add_pegs_pattern",
+      "pattern": "funnel",
+      "peg_type": "bonus",
+      "count": 9
     },
     {
-      "id": "B4_elasticity_up",
-      "name": "弹性强化",
-      "desc": "下一轮所有球弹性 +0.15",
-      "type": "global_elasticity_bonus",
-      "delta": 0.15
+      "id": "B4",
+      "name": "双子通道",
+      "desc": "中部开一条直通中槽的空通道（移除约 6 个 peg）",
+      "type": "remove_pegs_pattern",
+      "pattern": "vertical_corridor",
+      "count": 6
+    },
+    {
+      "id": "B5",
+      "name": "镜面边墙",
+      "desc": "左右边缘加反弹墙，球更难脱离盘面",
+      "type": "mirror_walls",
+      "elasticity": 1.0
+    },
+    {
+      "id": "B6",
+      "name": "血色盘面",
+      "desc": "危险 peg ×2，但全部击中后清空盘面 +50 分",
+      "type": "blood_board",
+      "danger_multiply": 2,
+      "clear_bonus": 50
     }
   ],
   "reward_balls": [
