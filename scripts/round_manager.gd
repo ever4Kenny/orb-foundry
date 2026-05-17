@@ -8,7 +8,7 @@ signal round_ended(round_index: int, passed: bool)
 signal upgrade_applied(upgrade: Dictionary)
 signal game_over(won: bool, final_score: int)
 
-enum GameState { IDLE, ROUND_ENTRY, PLAYING, BALL_SELECT, REWARD_SELECT, UPGRADE_SELECT, GAME_OVER }
+enum GameState { IDLE, RELIC_SELECT, ROUND_ENTRY, PLAYING, BALL_SELECT, REWARD_SELECT, UPGRADE_SELECT, GAME_OVER }
 
 var current_round: int = 0
 var shots_left: int = 0
@@ -38,6 +38,9 @@ func reset() -> void:
 	ScoreManager.reset()
 	BallBag.reset()
 	_load_config()
+	state = GameState.RELIC_SELECT
+
+func start_after_relic_select() -> void:
 	start_round(0)
 
 func start_round(ri: int) -> void:

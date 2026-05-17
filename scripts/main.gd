@@ -1,5 +1,6 @@
 extends Node2D
 
+const START_RELIC_SELECT_SCENE := preload("res://scenes/ui/start_relic_select.tscn")
 const BOARD_SCENE := preload("res://scenes/board.tscn")
 const HUD_SCENE := preload("res://scenes/ui/hud.tscn")
 const BALL_SELECT_SCENE := preload("res://scenes/ui/ball_select.tscn")
@@ -41,6 +42,7 @@ func _ready() -> void:
 	board = BOARD_SCENE.instantiate()
 	board.position = Vector2(120, 0)
 	add_child(board)
+	board.pegs_ready.connect(_on_pegs_ready)
 
 	var hud := HUD_SCENE.instantiate()
 	add_child(hud)
@@ -52,6 +54,9 @@ func _ready() -> void:
 	var round_entry := ROUND_ENTRY_SCENE.instantiate()
 	round_entry.start_requested.connect(_on_round_entry_start_requested)
 	add_child(round_entry)
+
+	var start_relic_select := START_RELIC_SELECT_SCENE.instantiate()
+	add_child(start_relic_select)
 
 	var ball_select := BALL_SELECT_SCENE.instantiate()
 	ball_select.ball_selected.connect(_on_ball_selected)
@@ -127,6 +132,8 @@ func _on_round_entry_start_requested() -> void:
 
 func _on_round_started(_round_index: int, _round_data: Dictionary) -> void:
 	_reset_round_tracking()
+
+func _on_pegs_ready() -> void:
 	RelicManager.apply_pending_round_start_effects(board)
 
 func _reset_round_tracking() -> void:
@@ -171,6 +178,8 @@ func _launch_selected_ball(release_position: Vector2) -> void:
 	_shot_balls.append(ball)
 
 	board.add_child(ball)
+
+	RelicManager._dispatch("onBallLaunched", {"ball_node": ball})
 
 	var direction := release_position - drag_start
 	if direction.length() < 20.0:

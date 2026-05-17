@@ -77,7 +77,11 @@ func _dispatch(trigger_name: String, payload: Dictionary) -> void:
 		match effect_type:
 			"remove_pegs":
 				# Defer to apply_pending_round_start_effects — store for later
-				_pending_round_start_effects.append({"relic": relic, "payload": payload})
+				_pending_round_start_effects.append({
+					"relic": relic,
+					"payload": payload,
+					"round_index": payload.get("round_index", -1)
+				})
 			"score_bonus":
 				ScoreManager.add(int(effect.get("value", 0)))
 			"glass_split_threshold":
@@ -93,12 +97,18 @@ func _dispatch(trigger_name: String, payload: Dictionary) -> void:
 				pass
 
 func apply_pending_round_start_effects(board: Node) -> void:
+	var current_round := RoundManager.current_round
+	var remaining: Array[Dictionary] = []
 	for entry in _pending_round_start_effects:
+		var entry_round: int = entry.get("round_index", -1)
+		if entry_round != current_round:
+			remaining.append(entry)
+			continue
 		var relic: Dictionary = entry.get("relic", {})
 		var effect: Dictionary = relic.get("effect", {})
 		if str(effect.get("type", "")) == "remove_pegs":
 			_apply_remove_pegs(relic, board)
-	_pending_round_start_effects.clear()
+	_pending_round_start_effects = remaining
 
 func _apply_remove_pegs(relic: Dictionary, board: Node) -> void:
 	var effect: Dictionary = relic.get("effect", {})

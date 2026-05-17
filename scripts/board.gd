@@ -1,5 +1,7 @@
 extends Node2D
 
+signal pegs_ready
+
 const LAYOUT_PATH := "res://resources/board_layouts/default.json"
 const PEG_SCRIPT := preload("res://scripts/peg.gd")
 const SLOT_SCRIPT := preload("res://scripts/slot.gd")
@@ -69,6 +71,7 @@ func generate_pegs() -> void:
 		add_child(peg)
 		peg_nodes.append(peg)
 		peg_index += 1
+	pegs_ready.emit()
 
 func _get_peg_positions() -> Array[Vector2]:
 	var patterns: Array = layout.get("patterns", [])
