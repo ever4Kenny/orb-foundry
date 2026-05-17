@@ -1,19 +1,123 @@
 {
-  "version": "v2.1",
-  "layout": {
+  "_meta": {
+    "version": "v2.1-locked-1",
+    "owner": "gameplay",
+    "doc_ref": "mvp-plan-v2.1.md §3, §8",
+    "coord_system": "viewport 1080x1920 (portrait 9:16), origin top-left, y-down",
+    "play_area": {
+      "x_min": 60, "x_max": 1020,
+      "y_min": 320, "y_max": 1620
+    },
+    "ui_reserve": {
+      "top": "0~320 (score / relic bar / combo)",
+      "bottom": "1620~1920 (slots + launcher)"
+    }
+  },
+
+  "peg_radius": 28,
+  "ball_radius": 32,
+  "grid": {
     "rows": 8,
-    "cols_range": [3, 5],
-    "total_pegs": 35
+    "row_spacing": 165,
+    "cols_per_row": [4, 5, 4, 5, 4, 5, 4, 4],
+    "stagger": "hex (odd rows offset by half-spacing)"
   },
+
   "peg_distribution": {
-    "normal": { "ratio": 0.70, "count": 25, "score": 10 },
-    "bonus":  { "ratio": 0.15, "count": 5,  "score": 30 },
-    "danger": { "ratio": 0.15, "count": 5,  "score": -20 }
+    "total": 35,
+    "normal": 25,
+    "bonus": 5,
+    "danger": 5,
+    "ratio_note": "70/15/15 of 35 → 24.5/5.25/5.25 → rounded to 25/5/5"
   },
-  "slots": [
-    { "id": "left",   "position": "bottom_left",   "effect": "elastic_bonus", "elastic_pct": 0.10 },
-    { "id": "center", "position": "bottom_center",  "effect": "score_bonus",   "score": 10 },
-    { "id": "right",  "position": "bottom_right",   "effect": "recover_ball",  "recover": 1 }
+
+  "pegs": [
+    {"id": "p01", "row": 0, "col": 0, "x": 180,  "y": 320,  "type": "normal"},
+    {"id": "p02", "row": 0, "col": 1, "x": 420,  "y": 320,  "type": "bonus"},
+    {"id": "p03", "row": 0, "col": 2, "x": 660,  "y": 320,  "type": "normal"},
+    {"id": "p04", "row": 0, "col": 3, "x": 900,  "y": 320,  "type": "normal"},
+
+    {"id": "p05", "row": 1, "col": 0, "x": 120,  "y": 485,  "type": "normal"},
+    {"id": "p06", "row": 1, "col": 1, "x": 360,  "y": 485,  "type": "normal"},
+    {"id": "p07", "row": 1, "col": 2, "x": 540,  "y": 485,  "type": "danger"},
+    {"id": "p08", "row": 1, "col": 3, "x": 720,  "y": 485,  "type": "normal"},
+    {"id": "p09", "row": 1, "col": 4, "x": 960,  "y": 485,  "type": "normal"},
+
+    {"id": "p10", "row": 2, "col": 0, "x": 180,  "y": 650,  "type": "normal"},
+    {"id": "p11", "row": 2, "col": 1, "x": 420,  "y": 650,  "type": "normal"},
+    {"id": "p12", "row": 2, "col": 2, "x": 660,  "y": 650,  "type": "bonus"},
+    {"id": "p13", "row": 2, "col": 3, "x": 900,  "y": 650,  "type": "normal"},
+
+    {"id": "p14", "row": 3, "col": 0, "x": 120,  "y": 815,  "type": "danger"},
+    {"id": "p15", "row": 3, "col": 1, "x": 360,  "y": 815,  "type": "normal"},
+    {"id": "p16", "row": 3, "col": 2, "x": 540,  "y": 815,  "type": "normal"},
+    {"id": "p17", "row": 3, "col": 3, "x": 720,  "y": 815,  "type": "normal"},
+    {"id": "p18", "row": 3, "col": 4, "x": 960,  "y": 815,  "type": "danger"},
+
+    {"id": "p19", "row": 4, "col": 0, "x": 180,  "y": 980,  "type": "normal"},
+    {"id": "p20", "row": 4, "col": 1, "x": 420,  "y": 980,  "type": "bonus"},
+    {"id": "p21", "row": 4, "col": 2, "x": 660,  "y": 980,  "type": "normal"},
+    {"id": "p22", "row": 4, "col": 3, "x": 900,  "y": 980,  "type": "normal"},
+
+    {"id": "p23", "row": 5, "col": 0, "x": 120,  "y": 1145, "type": "normal"},
+    {"id": "p24", "row": 5, "col": 1, "x": 360,  "y": 1145, "type": "normal"},
+    {"id": "p25", "row": 5, "col": 2, "x": 540,  "y": 1145, "type": "bonus"},
+    {"id": "p26", "row": 5, "col": 3, "x": 720,  "y": 1145, "type": "normal"},
+    {"id": "p27", "row": 5, "col": 4, "x": 960,  "y": 1145, "type": "danger"},
+
+    {"id": "p28", "row": 6, "col": 0, "x": 180,  "y": 1310, "type": "normal"},
+    {"id": "p29", "row": 6, "col": 1, "x": 420,  "y": 1310, "type": "normal"},
+    {"id": "p30", "row": 6, "col": 2, "x": 660,  "y": 1310, "type": "danger"},
+    {"id": "p31", "row": 6, "col": 3, "x": 900,  "y": 1310, "type": "normal"},
+
+    {"id": "p32", "row": 7, "col": 0, "x": 240,  "y": 1475, "type": "normal"},
+    {"id": "p33", "row": 7, "col": 1, "x": 480,  "y": 1475, "type": "bonus"},
+    {"id": "p34", "row": 7, "col": 2, "x": 720,  "y": 1475, "type": "normal"},
+    {"id": "p35", "row": 7, "col": 3, "x": 960,  "y": 1475, "type": "normal"}
   ],
-  "notes": "8行×3~5列，35 peg，普通/奖励/危险 70/15/15，3个底部槽位。center槽受R5影响变+25。"
+
+  "peg_score": {
+    "normal": 10,
+    "bonus": 30,
+    "danger": -20,
+    "_note": "danger 命中后球速 ×0.9（一次性）"
+  },
+
+  "peg_destruction": {
+    "mode": "destroy_on_hit",
+    "_note": "命中后 peg 消失（本关内不再生效）；不破坏 = combo 飙升 + 出关后保留密度，但破坏式更直观、首版选这个"
+  },
+
+  "slots": [
+    {
+      "id": "slot_left",
+      "x_min": 60, "x_max": 380, "y": 1700,
+      "score": 0,
+      "effect": {"type": "ball_bonus", "elasticity_delta": 0.10, "duration": "next_ball"},
+      "label": "弹性 +10%"
+    },
+    {
+      "id": "slot_mid",
+      "x_min": 380, "x_max": 700, "y": 1700,
+      "score": 10,
+      "effect": null,
+      "label": "+10 分（受 R5 影响 → +25）"
+    },
+    {
+      "id": "slot_right",
+      "x_min": 700, "x_max": 1020, "y": 1700,
+      "score": 0,
+      "effect": {"type": "ball_refill", "count": 1},
+      "label": "回 1 球"
+    }
+  ],
+
+  "walls": {
+    "left":  {"x": 60,   "elasticity": 0.85},
+    "right": {"x": 1020, "elasticity": 0.85},
+    "_note": "B5 镜面边墙时 elasticity → 1.0"
+  },
+
+  "gravity": 980,
+  "physics_substeps_per_frame": 4
 }

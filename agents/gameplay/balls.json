@@ -1,52 +1,136 @@
 {
-  "version": "v2.1",
+  "_meta": {
+    "version": "v2.1-locked-1",
+    "owner": "gameplay",
+    "doc_ref": "mvp-plan-v2.1.md §3, §8",
+    "physics_engine": "Godot 4.6 RigidBody2D",
+    "radius_default": 32
+  },
+
   "balls": [
     {
       "id": "iron",
       "name": "铁球",
-      "label": "穿透",
-      "weight": 2.0,
-      "restitution": 0.3,
-      "effect": "penetrate",
-      "effect_threshold": null,
-      "tags": ["heavy", "penetrate"],
-      "bag_init": 2
+      "tags": ["heavy", "pierce"],
+      "mass": 2.0,
+      "bounce": 0.55,
+      "friction": 0.10,
+      "linear_damp": 0.10,
+      "radius": 32,
+      "color_hint": "#9aa3ad",
+      "effects": [
+        {
+          "id": "iron_pierce",
+          "trigger": "onPegHit",
+          "type": "pierce",
+          "params": {
+            "max_pierces_per_launch": 3,
+            "speed_retain": 0.85,
+            "_note": "穿透时 peg 仍按正常结算分数和销毁"
+          }
+        }
+      ],
+      "intent": "重量级直线流，奖励瞄准多 peg 直线串联"
     },
+
     {
       "id": "crystal",
       "name": "水晶球",
-      "label": "高弹跳",
-      "weight": 0.8,
-      "restitution": 0.9,
-      "effect": "high_bounce",
-      "effect_threshold": null,
-      "tags": ["light", "bounce"],
-      "bag_init": 2
+      "tags": ["light", "bouncy"],
+      "mass": 0.7,
+      "bounce": 0.95,
+      "friction": 0.05,
+      "linear_damp": 0.05,
+      "radius": 30,
+      "color_hint": "#7fd9ff",
+      "effects": [],
+      "intent": "高弹跳混乱流，靠 combo 堆分，配 B5 镜面边墙"
     },
+
     {
       "id": "magnet",
       "name": "磁球",
-      "label": "吸附",
-      "weight": 1.2,
-      "restitution": 0.5,
-      "effect": "attract_pegs",
-      "effect_threshold": { "attract_radius": 60 },
-      "tags": ["magnet", "attract"],
-      "bag_init": 1
+      "tags": ["medium", "magnetic"],
+      "mass": 1.0,
+      "bounce": 0.65,
+      "friction": 0.10,
+      "linear_damp": 0.08,
+      "radius": 32,
+      "color_hint": "#c25cff",
+      "effects": [
+        {
+          "id": "magnet_attract",
+          "trigger": "onUpdate",
+          "type": "attract_to_tag",
+          "params": {
+            "target_peg_tag": "bonus",
+            "radius": 220,
+            "force": 350,
+            "_note": "R6 磁极强化时 radius ×1.5 → 330"
+          }
+        }
+      ],
+      "intent": "奖励 peg 收割机，瞄准趋近奖励 peg 簇"
     },
+
     {
       "id": "glass",
       "name": "玻璃球",
-      "label": "分裂",
-      "weight": 0.6,
-      "restitution": 0.7,
-      "effect": "split",
-      "effect_threshold": { "hit_count": 6 },
-      "tags": ["fragile", "split"],
-      "bag_init": 1
+      "tags": ["medium", "split"],
+      "mass": 0.9,
+      "bounce": 0.70,
+      "friction": 0.08,
+      "linear_damp": 0.10,
+      "radius": 30,
+      "color_hint": "#f4f1d4",
+      "effects": [
+        {
+          "id": "glass_split",
+          "trigger": "onPegHit",
+          "type": "split",
+          "params": {
+            "hit_threshold": 6,
+            "child_count": 2,
+            "child_mass_ratio": 0.5,
+            "child_bounce": 0.80,
+            "child_lifetime_ms": 4000,
+            "child_score_ratio": 0.5,
+            "_note": "R4 裂纹累积时 hit_threshold 6 → 4；子球不会再分裂"
+          }
+        }
+      ],
+      "intent": "积累爆发流，前期忍 6 次后中后期爆发"
     }
   ],
-  "bag_init_total": 6,
-  "draw_per_turn": 3,
-  "notes": "初始球袋6颗（铁2+水晶2+磁1+玻璃1），每轮抽3颗选1发射，用过不放回。R3使draw_per_turn变4，R4使glass.effect_threshold.hit_count变4，R6使magnet.effect_threshold.attract_radius×1.5。"
+
+  "ball_pouch": {
+    "_doc": "球袋是“永久扩充”的概念，本局内不放回。每轮从剩余球袋随机抽 N 颗候选，玩家选 1 颗发射。",
+    "initial_balls": [
+      {"ball_id": "iron",    "count": 2},
+      {"ball_id": "crystal", "count": 2},
+      {"ball_id": "magnet",  "count": 1},
+      {"ball_id": "glass",   "count": 1}
+    ],
+    "initial_total": 6,
+    "draw_per_round_default": 3,
+    "draw_per_round_with_R3": 4,
+    "pick_per_draw": 1,
+    "without_replacement": true,
+    "_refill_note": "球袋耗尽后，停止抽球（轮次结束）；slot_right 的“回 1 球”补的是当前轮发球数 +1，不是球袋"
+  },
+
+  "round_launches": {
+    "round_1": 4,
+    "round_2": 5,
+    "round_3": 5,
+    "_note": "总发球数 14 颗 ≤ 球袋 6 颗 + 选 3 颗扩充 + 回血。需保证球袋至少能抽完 14 次的候选——所以 round_2 后“扩充球袋”是必须给的"
+  },
+
+  "reroll": {
+    "enabled": true,
+    "charges_per_run": 2,
+    "behavior": "discard_current_3_candidates_redraw_from_same_pouch",
+    "consume_pouch": false,
+    "ui": "发射区下方圆形按钮，剩余次数右上角数字"
+  }
 }
