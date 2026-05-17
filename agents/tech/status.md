@@ -8,8 +8,8 @@
 | 阶段 | 涉及看板任务 | 状态 | Commit |
 |---|---|---|---|
 | 阶段 1：触发器框架 + RelicManager 骨架 | T1 | ✅ Done & Pushed | 37c5d6f |
-| 阶段 2：6 个 relic effect + 已激活栏 UI | T2（含 art A2 emoji 占位） | 🟡 In Progress | — |
-| 阶段 3：4 个选择 UI（起始/第1关后/第2关后） | T4 / T5 / T10 / T11 | ⏳ Pending | — |
+| 阶段 2：6 个 relic effect + 已激活栏 UI + **起始 relic 三选一 UI** | T2 + **T4**（含 art A2 emoji 占位） | 🟡 In Progress | — |
+| 阶段 3：剩余选择 UI（第1关后/第2关后） | T5 / T10 / T11 | ⏳ Pending | — |
 | 阶段 4：改造池扩展 + JSON schema | T3 / T9 | ⏳ Pending | — |
 | 阶段 5：重投 + Combo 全局 + 关前弹窗→toast | T6 / T7 / T8 | ⏳ Pending | — |
 
