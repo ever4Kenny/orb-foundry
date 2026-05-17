@@ -40,7 +40,7 @@
     {
       "id": "R6",
       "name": "磁极强化",
-      "desc": "磁球吸附范围 ×1.5",
+      "desc": "磁球吸力 ×1.5",
       "trigger": "onBallLaunch",
       "effect": {"type": "magnet_range_mul", "value": 1.5}
     }

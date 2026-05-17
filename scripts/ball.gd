@@ -39,6 +39,7 @@ var _death_progress: float = 0.0:
 	set(value):
 		_death_progress = value
 		queue_redraw()
+var _stuck_timer: float = 0.0
 var _pierced_pegs: Array = []  # pegs already pierced (don't re-score)
 var _magnet_target_pos: Vector2 = Vector2.ZERO
 var _death_tween: Tween = null
@@ -146,12 +147,20 @@ func _physics_process(delta: float) -> void:
 		_apply_magnetic_force(delta)
 	
 	# Speed cap
-	var sp = linear_velocity.length()
+	var sp := linear_velocity.length()
 	if sp > MAX_SPEED:
 		linear_velocity = linear_velocity.normalized() * MAX_SPEED
-	
-	
-	# Fallen below slots — gap death (slots end at y≈1060, threshold before viewport bottom)
+
+	# Stuck detection: nearly stopped for > 2s
+	if sp < 10.0:
+		_stuck_timer += delta
+		if _stuck_timer > 2.0:
+			_die_through_gap()
+			return
+	else:
+		_stuck_timer = 0.0
+
+	# Fallen below slots — gap death
 	if position.y > 1070:
 		_die_through_gap()
 		return

@@ -71,6 +71,7 @@ func _append_relic_card(relic: Dictionary) -> void:
 		return
 	var rid := str(relic.get("id", ""))
 	var card := PanelContainer.new()
+	card.tooltip_text = str(relic.get("desc", ""))
 	var hb := HBoxContainer.new()
 	hb.add_theme_constant_override("separation", 4)
 	card.add_child(hb)

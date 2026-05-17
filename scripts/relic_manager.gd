@@ -91,7 +91,7 @@ func _dispatch(trigger_name: String, payload: Dictionary) -> void:
 			"magnet_range_mul":
 				var ball_node = payload.get("ball_node")
 				if is_instance_valid(ball_node):
-					ball_node.magnet_range *= float(effect.get("value", 1.5))
+					ball_node.magnet_force *= float(effect.get("value", 1.5))
 			# ball_draw_count and score_override are query-type, handled via get_* APIs
 			_:
 				pass
