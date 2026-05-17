@@ -1,0 +1,19 @@
+{
+  "version": "v2.1",
+  "layout": {
+    "rows": 8,
+    "cols_range": [3, 5],
+    "total_pegs": 35
+  },
+  "peg_distribution": {
+    "normal": { "ratio": 0.70, "count": 25, "score": 10 },
+    "bonus":  { "ratio": 0.15, "count": 5,  "score": 30 },
+    "danger": { "ratio": 0.15, "count": 5,  "score": -20 }
+  },
+  "slots": [
+    { "id": "left",   "position": "bottom_left",   "effect": "elastic_bonus", "elastic_pct": 0.10 },
+    { "id": "center", "position": "bottom_center",  "effect": "score_bonus",   "score": 10 },
+    { "id": "right",  "position": "bottom_right",   "effect": "recover_ball",  "recover": 1 }
+  ],
+  "notes": "8行×3~5列，35 peg，普通/奖励/危险 70/15/15，3个底部槽位。center槽受R5影响变+25。"
+}

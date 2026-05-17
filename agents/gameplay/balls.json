@@ -1,0 +1,52 @@
+{
+  "version": "v2.1",
+  "balls": [
+    {
+      "id": "iron",
+      "name": "铁球",
+      "label": "穿透",
+      "weight": 2.0,
+      "restitution": 0.3,
+      "effect": "penetrate",
+      "effect_threshold": null,
+      "tags": ["heavy", "penetrate"],
+      "bag_init": 2
+    },
+    {
+      "id": "crystal",
+      "name": "水晶球",
+      "label": "高弹跳",
+      "weight": 0.8,
+      "restitution": 0.9,
+      "effect": "high_bounce",
+      "effect_threshold": null,
+      "tags": ["light", "bounce"],
+      "bag_init": 2
+    },
+    {
+      "id": "magnet",
+      "name": "磁球",
+      "label": "吸附",
+      "weight": 1.2,
+      "restitution": 0.5,
+      "effect": "attract_pegs",
+      "effect_threshold": { "attract_radius": 60 },
+      "tags": ["magnet", "attract"],
+      "bag_init": 1
+    },
+    {
+      "id": "glass",
+      "name": "玻璃球",
+      "label": "分裂",
+      "weight": 0.6,
+      "restitution": 0.7,
+      "effect": "split",
+      "effect_threshold": { "hit_count": 6 },
+      "tags": ["fragile", "split"],
+      "bag_init": 1
+    }
+  ],
+  "bag_init_total": 6,
+  "draw_per_turn": 3,
+  "notes": "初始球袋6颗（铁2+水晶2+磁1+玻璃1），每轮抽3颗选1发射，用过不放回。R3使draw_per_turn变4，R4使glass.effect_threshold.hit_count变4，R6使magnet.effect_threshold.attract_radius×1.5。"
+}
