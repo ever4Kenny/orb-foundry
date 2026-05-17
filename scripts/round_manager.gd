@@ -50,6 +50,7 @@ func start_round(ri: int) -> void:
 	shots_left = rd.get("ball_count", 4)
 	state = GameState.ROUND_ENTRY
 	round_started.emit(ri, rd)
+	RelicManager._dispatch("onRoundStart", {"round_index": ri, "round_data": rd})
 
 func enter_ball_select() -> void:
 	if state == GameState.ROUND_ENTRY:

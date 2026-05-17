@@ -62,15 +62,19 @@ func _on_body_entered(body: Node) -> void:
 	if body in _captured_balls:
 		return
 	_captured_balls.append(body)
-	
+
+	var base_score := 0
 	match slot_effect:
 		"score_bonus":
+			base_score = 50
 			ScoreManager.add(50)
 		"score_multiplier":
 			ScoreManager.next_score_multiplier = 1.5
 		"ball_recovery":
 			RoundManager.shots_left += 1
-	
+
+	RelicManager._dispatch("onSlotScore", {"slot_id": slot_position, "slot_tags": [slot_position], "base_score": base_score, "ball_node": body})
+
 	_play_feedback()
 	_absorb_ball(body)
 

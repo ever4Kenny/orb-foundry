@@ -90,6 +90,7 @@ func _on_body_entered(body: Node) -> void:
 	
 	var hit_result = body.on_peg_hit(peg_type, peg_tags, self)
 	if hit_result:
+		RelicManager._dispatch("onPegHit", {"peg_type": peg_type, "peg_tags": peg_tags, "ball_node": body, "peg_node": self})
 		if peg_type != "danger":
 			alive = false
 			collision_layer = 0
@@ -177,6 +178,21 @@ func die() -> void:
 	alive = false
 	hide()
 	collision_layer = 0
+	_dispatch_danger_cleared_if_last()
+
+func _dispatch_danger_cleared_if_last() -> void:
+	if peg_type != "danger":
+		return
+	if not is_inside_tree():
+		return
+	for p in get_tree().get_nodes_in_group("pegs"):
+		if p == self:
+			continue
+		if not is_instance_valid(p):
+			continue
+		if str(p.get("peg_type")) == "danger" and p.alive:
+			return
+	RelicManager._dispatch("onAllDangerCleared", {"round_index": RoundManager.current_round})
 
 func reset_peg() -> void:
 	alive = true

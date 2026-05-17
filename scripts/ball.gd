@@ -354,6 +354,7 @@ func launch(velocity: Vector2) -> void:
 	_alive = true
 	_dying = false
 	_death_progress = 0.0
+	RelicManager._dispatch("onBallLaunch", {"ball_node": self})
 
 func is_alive() -> bool:
 	return _alive

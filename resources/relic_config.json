@@ -1,0 +1,48 @@
+{
+  "relics": [
+    {
+      "id": "R1",
+      "name": "熔炉残温",
+      "desc": "每关开始时盘面随机移除 1 红 peg + 1 灰 peg",
+      "trigger": "onRoundStart",
+      "effect": {"type": "remove_pegs", "by_type": {"danger": 1, "normal": 1}, "mode": "random"}
+    },
+    {
+      "id": "R2",
+      "name": "奖励共振",
+      "desc": "击中任意奖励 peg 时额外 +15 分",
+      "trigger": "onPegHit",
+      "tag_filter": ["bonus"],
+      "effect": {"type": "score_bonus", "value": 15}
+    },
+    {
+      "id": "R3",
+      "name": "额外弹仓",
+      "desc": "每轮抽球数 3 → 4（仍选 1 颗发射）",
+      "trigger": "onRoundStart",
+      "effect": {"type": "ball_draw_count", "delta": 1}
+    },
+    {
+      "id": "R4",
+      "name": "裂纹累积",
+      "desc": "玻璃球分裂阈值 6 → 4 次碰撞",
+      "trigger": "onBallLaunch",
+      "effect": {"type": "glass_split_threshold", "value": 4}
+    },
+    {
+      "id": "R5",
+      "name": "重锤校准",
+      "desc": "中槽得分 +10 → +25",
+      "trigger": "onSlotScore",
+      "tag_filter": ["center"],
+      "effect": {"type": "score_override", "value": 25}
+    },
+    {
+      "id": "R6",
+      "name": "磁极强化",
+      "desc": "磁球吸附范围 ×1.5",
+      "trigger": "onBallLaunch",
+      "effect": {"type": "magnet_range_mul", "value": 1.5}
+    }
+  ]
+}
