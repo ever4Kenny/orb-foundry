@@ -43,7 +43,6 @@ func generate_pegs() -> void:
 	var round_data := RoundManager.get_round_data()
 	var bonus_left: int = round_data.get("bonus_peg_count", 0)
 	var danger_left: int = round_data.get("danger_peg_count", 0)
-	var explosion_left: int = round_data.get("explosion_peg_count", 0)
 	var total_pegs := peg_positions.size()
 
 	var special_indices: Array[int] = []
@@ -54,8 +53,6 @@ func generate_pegs() -> void:
 	var bonus_indices := special_indices.slice(0, min(bonus_left, special_indices.size()))
 	var danger_start: int = bonus_indices.size()
 	var danger_indices := special_indices.slice(danger_start, min(danger_start + danger_left, special_indices.size()))
-	var explosion_start: int = danger_start + danger_indices.size()
-	var explosion_indices := special_indices.slice(explosion_start, min(explosion_start + explosion_left, special_indices.size()))
 	var peg_index := 0
 
 	for position in peg_positions:
@@ -63,7 +60,7 @@ func generate_pegs() -> void:
 		peg.name = "Peg"
 		peg.set_script(PEG_SCRIPT)
 		peg.position = position
-		var peg_type := _pick_peg_type(peg_index, bonus_indices, danger_indices, explosion_indices)
+		var peg_type := _pick_peg_type(peg_index, bonus_indices, danger_indices)
 		peg.set("peg_radius", peg_radius)
 		peg.set("peg_type", peg_type)
 		peg.set("peg_tags", _get_peg_tags(peg_type))
@@ -200,13 +197,11 @@ func _create_peg(position: Vector2, peg_type: String) -> Node:
 	peg_nodes.append(peg)
 	return peg
 
-func _pick_peg_type(index: int, bonus_indices: Array, danger_indices: Array, explosion_indices: Array) -> String:
+func _pick_peg_type(index: int, bonus_indices: Array, danger_indices: Array) -> String:
 	if index in bonus_indices:
 		return "bonus"
 	if index in danger_indices:
 		return "danger"
-	if index in explosion_indices:
-		return "explosion"
 	return "normal"
 
 func _get_peg_tags(peg_type: String) -> Array[String]:

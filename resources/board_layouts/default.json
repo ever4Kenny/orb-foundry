@@ -2,63 +2,60 @@
   "board_width": 720,
   "board_height": 1080,
   "peg_radius": 7,
-  "peg_rows": [0.12, 0.18, 0.23, 0.29, 0.35, 0.41, 0.46, 0.52, 0.58, 0.64, 0.69, 0.75],
-  "peg_cols": [8, 9, 8, 9, 8, 9, 8, 9, 8, 9, 8, 9],
-  "patterns": [
-    {
-      "type": "line",
-      "count": 18,
-      "start": [0.16, 0.11],
-      "end": [0.46, 0.47]
-    },
-    {
-      "type": "arc",
-      "count": 18,
-      "center": [0.62, 0.32],
-      "radius": 150,
-      "start_degrees": 25,
-      "end_degrees": 155
-    },
-    {
-      "type": "block",
-      "rows": 5,
-      "cols": 6,
-      "start": [0.13, 0.56],
-      "spacing": [32, 30]
-    },
-    {
-      "type": "stagger",
-      "rows": [0.53, 0.59, 0.65, 0.71, 0.77, 0.83],
-      "cols": [6, 6, 6, 6, 6, 6],
-      "x_min_ratio": 0.48,
-      "x_max_ratio": 0.91
-    }
+  "peg_rows": [
+    0.12,
+    0.18,
+    0.23,
+    0.29,
+    0.35,
+    0.41,
+    0.46,
+    0.52,
+    0.58,
+    0.64,
+    0.69,
+    0.75
+  ],
+  "peg_cols": [
+    8,
+    9,
+    8,
+    9,
+    8,
+    9,
+    8,
+    9,
+    8,
+    9,
+    8,
+    9
   ],
   "peg_types": {
     "normal": {
       "color": "#666666",
       "score": 10,
       "disappear": true,
-      "tags": ["normal"]
+      "tags": [
+        "normal"
+      ]
     },
     "bonus": {
       "color": "#ffaa00",
-      "score": 25,
+      "score": 30,
       "disappear": true,
-      "tags": ["bonus", "metal"]
+      "tags": [
+        "bonus",
+        "metal"
+      ]
     },
     "danger": {
       "color": "#cc3333",
       "score": -5,
-      "speed_penalty": 0.8,
       "disappear": false,
-      "tags": ["danger"]
-    },
-    "explosion": {
-      "color": "#ff6600",
-      "score": 10,
-      "disappear": true,
-      "tags": ["normal", "explosive"]
+      "tags": [
+        "danger"
+      ],
+      "speed_penalty": 0.8
     }
   },
   "slots": [
@@ -68,17 +65,18 @@
       "y_offset": -36,
       "width": 132,
       "height": 32,
-      "effect": "score_multiplier",
-      "label": "×1.5 下一击"
+      "effect": "ball_bonus",
+      "elasticity_delta": 0.1,
+      "label": "弹性+10%（下一颗球）"
     },
     {
       "position": "center",
-      "x_ratio": 0.50,
+      "x_ratio": 0.5,
       "y_offset": -36,
       "width": 132,
       "height": 32,
       "effect": "score_bonus",
-      "label": "+50分"
+      "label": "+10分（R5时+25）"
     },
     {
       "position": "right",
@@ -87,7 +85,7 @@
       "width": 132,
       "height": 32,
       "effect": "ball_recovery",
-      "label": "+1球"
+      "label": "+1球（每轮最多1次）"
     }
   ]
 }

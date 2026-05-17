@@ -6,31 +6,26 @@
       "target_score": 600,
       "ball_count": 4,
       "mechanic": "combo",
-      "mechanic_desc": "连续击中灰色钉子获得连击加分：连击数-1 ×5分。击中金色或红色钉子中断连击。",
-      "bonus_peg_count": 4,
-      "danger_peg_count": 4
+      "bonus_peg_count": 15,
+      "danger_peg_count": 15
     },
     {
       "id": 2,
       "name": "第2轮",
       "target_score": 1400,
       "ball_count": 5,
-      "mechanic": "chain",
-      "mechanic_desc": "击中橙色爆炸钉子会摧毁80px范围内的钉子。被连锁摧毁的普通和金色钉子正常得分，但不会继续触发爆炸。",
-      "explosion_peg_count": 8,
-      "bonus_peg_count": 4,
-      "danger_peg_count": 5
+      "mechanic": "combo",
+      "bonus_peg_count": 15,
+      "danger_peg_count": 15
     },
     {
       "id": 3,
       "name": "第3轮",
       "target_score": 2400,
       "ball_count": 5,
-      "mechanic": "chain",
-      "mechanic_desc": "爆炸钉子回归！击中橙色爆炸钉摧毁80px范围内的钉子。本关爆炸钉较少（6个），需要配合升级效果。",
-      "explosion_peg_count": 6,
-      "bonus_peg_count": 4,
-      "danger_peg_count": 6
+      "mechanic": "combo",
+      "bonus_peg_count": 15,
+      "danger_peg_count": 15
     }
   ]
 }

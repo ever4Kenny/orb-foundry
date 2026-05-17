@@ -3,54 +3,79 @@
     {
       "id": "iron",
       "name": "铁球",
-      "desc": "重·穿透peg",
-      "color": "#666666",
+      "desc": "重·穿透peg（最多3次）",
+      "color": "#9aa3ad",
       "weight": 2.0,
-      "bounce": 0.3,
+      "bounce": 0.55,
       "radius": 14,
-      "tags": ["heavy", "metal"],
+      "tags": [
+        "heavy",
+        "pierce"
+      ],
       "effect": "pierce"
     },
     {
       "id": "crystal",
       "name": "水晶球",
       "desc": "轻·高弹跳",
-      "color": "#dddddd",
-      "weight": 0.5,
-      "bounce": 0.9,
+      "color": "#7fd9ff",
+      "weight": 0.7,
+      "bounce": 0.95,
       "radius": 14,
-      "tags": ["light", "crystal"],
+      "tags": [
+        "light",
+        "crystal"
+      ],
       "effect": "none"
     },
     {
       "id": "magnet",
       "name": "磁球",
-      "desc": "中·偏向奖励",
-      "color": "#4488ff",
+      "desc": "中·吸附奖励peg",
+      "color": "#c25cff",
       "weight": 1.0,
-      "bounce": 0.6,
+      "bounce": 0.65,
       "radius": 14,
-      "tags": ["medium", "electric"],
+      "tags": [
+        "medium",
+        "magnetic"
+      ],
       "effect": "magnet",
-      "magnet_target_tag": "metal",
-      "magnet_range": 200.0,
-      "magnet_force": 300.0
+      "magnet_target_tag": "bonus",
+      "magnet_range": 220.0,
+      "magnet_force": 350.0
     },
     {
       "id": "glass",
       "name": "玻璃球",
-      "desc": "中·撞6分裂",
-      "color": "#44dd66",
-      "weight": 1.0,
-      "bounce": 0.6,
+      "desc": "中·撞6次分裂",
+      "color": "#f4f1d4",
+      "weight": 0.9,
+      "bounce": 0.7,
       "radius": 14,
-      "tags": ["medium", "glass", "split"],
+      "tags": [
+        "medium",
+        "glass",
+        "split"
+      ],
       "effect": "split",
       "split_threshold": 6,
       "split_radius": 12
     }
   ],
-  "initial_bag": ["iron", "iron", "crystal", "crystal", "magnet", "glass"],
-  "refill_balls": ["iron", "crystal", "magnet", "glass"],
+  "initial_bag": [
+    "iron",
+    "iron",
+    "crystal",
+    "crystal",
+    "magnet",
+    "glass"
+  ],
+  "refill_balls": [
+    "iron",
+    "crystal",
+    "magnet",
+    "glass"
+  ],
   "draw_count": 3
 }

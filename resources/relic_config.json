@@ -32,10 +32,10 @@
     {
       "id": "R5",
       "name": "重锤校准",
-      "desc": "中槽得分 +50 → +80",
+      "desc": "中槽得分 +10 → +25",
       "trigger": "onSlotScore",
       "tag_filter": ["center"],
-      "effect": {"type": "score_override", "value": 80}
+      "effect": {"type": "score_override", "value": 25}
     },
     {
       "id": "R6",

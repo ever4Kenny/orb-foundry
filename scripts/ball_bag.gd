@@ -4,8 +4,10 @@
 extends Node
 
 signal bag_changed(available_balls: Array)
+signal reroll_used(remaining: int)
 
 var _entries: Array = []  # [{id: String, used: bool}]
+var reroll_remaining: int = 2
 
 func _ready() -> void:
 	_load_config()
@@ -33,6 +35,7 @@ func _reset_from_config(cfg: Dictionary) -> void:
 
 func reset() -> void:
 	_load_config()
+	reroll_remaining = 2
 
 func draw(n: int = 3) -> Array:
 	var avail = _entries.filter(func(e): return not e.used)
@@ -83,3 +86,10 @@ func get_available_count() -> int:
 
 func get_total_count() -> int:
 	return _entries.size()
+
+func reroll() -> bool:
+	if reroll_remaining <= 0:
+		return false
+	reroll_remaining -= 1
+	reroll_used.emit(reroll_remaining)
+	return true
