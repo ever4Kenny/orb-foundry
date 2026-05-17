@@ -46,14 +46,11 @@
       "x_min_ratio": 0.62, "x_max_ratio": 0.96
     },
     {
-      "_name": "底部漏斗左 — 开口更宽，中槽不再必进",
-      "type": "line", "count": 8,
-      "start": [0.28, 0.68], "end": [0.42, 0.92]
-    },
-    {
-      "_name": "底部漏斗右 — 对称",
-      "type": "line", "count": 8,
-      "start": [0.72, 0.68], "end": [0.58, 0.92]
+      "_name": "底部横向反弹排1 — 阻止球直落槽，延长存活",
+      "type": "stagger",
+      "rows": [0.72, 0.80, 0.88],
+      "cols": [7, 6, 7],
+      "x_min_ratio": 0.10, "x_max_ratio": 0.90
     }
   ],
   "peg_types": {
