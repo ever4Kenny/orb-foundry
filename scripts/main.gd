@@ -11,7 +11,7 @@ const GAME_OVER_SCENE := preload("res://scenes/ui/game_over.tscn")
 const SHOT_RESULT_SCENE := preload("res://scenes/ui/shot_result.tscn")
 const BALL_SCENE := preload("res://scenes/ball.tscn")
 const BALL_CONFIG_PATH := "res://resources/ball_config.json"
-const LAUNCH_SPEED := 420.0
+const LAUNCH_SPEED := 300.0
 
 var board: Node2D
 var selected_ball_id := ""

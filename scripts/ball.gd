@@ -10,8 +10,8 @@ signal combo_updated(combo_count: int)
 enum BallEffect { NONE, PIERCE, MAGNET, SPLIT }
 enum DeathVisual { NATURAL, GAP }
 
-const GRAVITY_SCALE := 0.55
-const MAX_SPEED := 560.0
+const GRAVITY_SCALE := 0.38
+const MAX_SPEED := 400.0
 const NATURAL_DEATH_DURATION := 0.3
 const GAP_DEATH_DURATION := 0.3
 
