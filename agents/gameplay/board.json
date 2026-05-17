@@ -1,16 +1,11 @@
 {
   "_meta": {
-    "version": "v2.1-locked-2",
+    "version": "v2.1-locked-3",
     "owner": "gameplay",
     "doc_ref": "mvp-plan-v2.1.md §3, §8",
-    "supersedes": "v2.1-locked-1 (1080x1920 / 35 pegs / danger disappear) — rejected by 总监 2026-05-17",
-    "change_log_vs_locked_1": [
-      "尺寸 1080x1920 → 720x1080（沿用 v0.5 已验证手感）",
-      "peg 总数 35 → 102（保持现有 layout，避免双变量同改）",
-      "danger 改为 -20 消失 → 保持 -5 不消失（保护 R1/B2/B6 设计意义）",
-      "坐标系由绝对像素改为比例式，与 godot/resources/board_layouts/default.json 一致"
-    ],
-    "reference_layout": "godot/resources/board_layouts/default.json"
+    "supersedes": "v2.1-locked-2 (pure grid fallback) — rejected: no shape variety",
+    "design_intent": "Peglin/Roundguard 风格：用 line/arc/block/stagger 组合出有形状的盘面，让不同区域有不同策略价值。球的路径不是均匀散落，而是被形状引导。",
+    "reference_engine": "godot/scripts/board.gd — _get_line_positions / _get_arc_positions / _get_block_positions / _get_stagger_positions"
   },
 
   "board_width": 720,
@@ -18,19 +13,114 @@
   "peg_radius": 7,
   "ball_radius": 12,
 
-  "_layout_note": "12 行 × 8/9 交错栅格 = 102 颗。比例坐标系（0~1）便于美术 / UI 缩放。",
+  "patterns": [
+    {
+      "_name": "顶部皇冠弧",
+      "_intent": "开局引导球向两侧散开，制造第一次路径选择",
+      "type": "arc",
+      "count": 12,
+      "center": [0.50, 0.08],
+      "radius": 120,
+      "start_degrees": 20,
+      "end_degrees": 160
+    },
+    {
+      "_name": "左上斜线",
+      "_intent": "左侧下行通道，铁球穿透流的主路径",
+      "type": "line",
+      "count": 10,
+      "start": [0.12, 0.15],
+      "end": [0.35, 0.42]
+    },
+    {
+      "_name": "右上斜线",
+      "_intent": "右侧下行通道，与左上对称形成 V 形漏斗",
+      "type": "line",
+      "count": 10,
+      "start": [0.88, 0.15],
+      "end": [0.65, 0.42]
+    },
+    {
+      "_name": "中部密集块",
+      "_intent": "核心得分区，玻璃球分裂后子球在此区域高 combo；bonus peg 集中于此",
+      "type": "block",
+      "rows": 4,
+      "cols": 7,
+      "start": [0.22, 0.45],
+      "spacing": [56, 38]
+    },
+    {
+      "_name": "中下弧形碗",
+      "_intent": "水晶球高弹跳在碗内反复弹跳堆 combo；磁球在此吸附 bonus peg",
+      "type": "arc",
+      "count": 14,
+      "center": [0.50, 0.58],
+      "radius": 160,
+      "start_degrees": 200,
+      "end_degrees": 340
+    },
+    {
+      "_name": "左下散布",
+      "_intent": "左槽（弹性+10%）前的引导区，稀疏 = 球速快、落槽概率高",
+      "type": "stagger",
+      "rows": [0.72, 0.78, 0.84],
+      "cols": [4, 4, 4],
+      "x_min_ratio": 0.04,
+      "x_max_ratio": 0.38
+    },
+    {
+      "_name": "右下散布",
+      "_intent": "右槽（回 1 球）前的引导区，同左下对称",
+      "type": "stagger",
+      "rows": [0.72, 0.78, 0.84],
+      "cols": [4, 4, 4],
+      "x_min_ratio": 0.62,
+      "x_max_ratio": 0.96
+    },
+    {
+      "_name": "底部中央漏斗线（左）",
+      "_intent": "引导球落入中槽（+10 分 / R5 时 +25），精准瞄准的奖励",
+      "type": "line",
+      "count": 6,
+      "start": [0.35, 0.75],
+      "end": [0.42, 0.88]
+    },
+    {
+      "_name": "底部中央漏斗线（右）",
+      "_intent": "与左侧对称，形成中槽入口的 V 形",
+      "type": "line",
+      "count": 6,
+      "start": [0.65, 0.75],
+      "end": [0.58, 0.88]
+    }
+  ],
 
-  "peg_rows": [0.12, 0.18, 0.23, 0.29, 0.35, 0.41, 0.46, 0.52, 0.58, 0.64, 0.69, 0.75],
-  "peg_cols": [8, 9, 8, 9, 8, 9, 8, 9, 8, 9, 8, 9],
+  "_peg_count_breakdown": {
+    "顶部皇冠弧": 12,
+    "左上斜线": 10,
+    "右上斜线": 10,
+    "中部密集块_4x7": 28,
+    "中下弧形碗": 14,
+    "左下散布_3x4": 12,
+    "右下散布_3x4": 12,
+    "底部漏斗线左": 6,
+    "底部漏斗线右": 6,
+    "total": 110,
+    "_note": "比 102 多 8 颗。如果小码觉得太密，优先从中部密集块减 1 行（-7）= 103。或者保持 110 也行——多 8 颗不影响目标分平衡（danger 比例不变）。"
+  },
 
-  "peg_distribution_v2_1": {
-    "total": 102,
+  "peg_distribution": {
+    "total_target": 102,
     "normal": 72,
     "bonus": 15,
     "danger": 15,
-    "ratio_actual": "70.6 / 14.7 / 14.7",
-    "ratio_target": "70 / 15 / 15",
-    "_allocation_note": "由小码在生成器中按 stable seed 随机分布；bonus 倾向中下部（更易触发 R5 / B1 / B3），danger 倾向上部与边缘"
+    "ratio": "70/15/15",
+    "placement_rules": {
+      "bonus": "倾向中部密集块 + 中下弧形碗（高价值区域，奖励精准瞄准）",
+      "danger": "倾向顶部皇冠弧边缘 + 左右斜线中段（自然球路上的持久威胁）",
+      "normal": "填充剩余位置",
+      "_seed_note": "小码用 stable seed 随机分配，保证每局同一盘面"
+    }
   },
 
   "peg_types": {
@@ -45,8 +135,7 @@
       "score": 30,
       "score_with_R2": 45,
       "disappear": true,
-      "tags": ["bonus", "metal"],
-      "_change_from_default": "score 25 → 30，与 v2.1 config-proposal §2 对齐"
+      "tags": ["bonus", "metal"]
     },
     "danger": {
       "color": "#cc3333",
@@ -54,12 +143,8 @@
       "speed_penalty": 0.8,
       "disappear": false,
       "tags": ["danger"],
-      "_hard_rule": "danger 永远不消失。R1 / B2 / B6 的设计依赖于这条心智模型，不要改。"
+      "_hard_rule": "永远不消失。R1/B2/B6 设计依赖此心智模型。"
     }
-  },
-
-  "_peg_types_v2_1_removed": {
-    "explosion": "v2.1 不使用 round_config.json 里的 explosion 钉子机制（chain 玩法已被 relic + 改造替代）。小码生成 board 时跳过 explosion 类型。"
   },
 
   "slots": [
@@ -70,13 +155,9 @@
       "width": 132,
       "height": 32,
       "effect": "ball_bonus",
-      "effect_params": {
-        "elasticity_delta": 0.10,
-        "duration": "next_ball"
-      },
+      "effect_params": {"elasticity_delta": 0.10, "duration": "next_ball"},
       "score": 0,
-      "label": "弹性 +10%（下一颗球）",
-      "_change_from_default": "原 score_multiplier ×1.5 改为 ball_bonus 弹性 +10%，与 v2.1 设计对齐"
+      "label": "弹性 +10%"
     },
     {
       "position": "center",
@@ -85,13 +166,9 @@
       "width": 132,
       "height": 32,
       "effect": "score_bonus",
-      "effect_params": {
-        "value": 10,
-        "value_with_R5": 25
-      },
+      "effect_params": {"value": 10, "value_with_R5": 25},
       "score": 10,
-      "label": "+10 分（R5 时 +25）",
-      "_change_from_default": "原 +50 分改为 +10 / R5 时覆盖为 +25（不是叠加）"
+      "label": "+10 分（R5 覆盖 +25）"
     },
     {
       "position": "right",
@@ -100,12 +177,9 @@
       "width": 132,
       "height": 32,
       "effect": "ball_recovery",
-      "effect_params": {
-        "count": 1,
-        "max_per_round": 1
-      },
+      "effect_params": {"count": 1, "max_per_round": 1},
       "score": 0,
-      "label": "回 1 球（每轮最多 1 次）"
+      "label": "回 1 球（每轮限 1 次）"
     }
   ],
 
@@ -118,11 +192,10 @@
   "gravity": 980,
   "physics_substeps_per_frame": 4,
 
-  "_compat_with_round_config": {
-    "round_1_target": 600,
-    "round_2_target": 800,
-    "round_3_target": 1000,
-    "cumulative": [600, 1400, 2400],
-    "_note": "round_config.json 的 target_score 字段是累计口径，已与 v2.1 文档一致（600/1400/2400）。本字段仅为交叉校验。"
+  "_strategy_map": {
+    "铁球穿透流": "瞄准左/右斜线顶端，穿透 3 颗直线 peg 一路向下",
+    "水晶球 combo 流": "瞄准中下弧形碗边缘，高弹跳在碗内反复弹跳",
+    "磁球奖励流": "瞄准中部密集块上方，磁力吸附 bonus peg 簇",
+    "玻璃球分裂流": "瞄准中部密集块中心，6 次碰撞后分裂子球覆盖密集区"
   }
 }
