@@ -1,0 +1,69 @@
+{
+  "_name": "第1轮 — 标准漏斗（中槽有难度）",
+  "board_width": 1080,
+  "board_height": 1080,
+  "peg_radius": 7,
+  "patterns": [
+    {
+      "_name": "顶部皇冠弧",
+      "type": "arc", "count": 20,
+      "center": [0.5, 0.07], "radius": 170,
+      "start_degrees": 12, "end_degrees": 168
+    },
+    {
+      "_name": "左上斜线",
+      "type": "line", "count": 18,
+      "start": [0.06, 0.10], "end": [0.38, 0.46]
+    },
+    {
+      "_name": "右上斜线",
+      "type": "line", "count": 18,
+      "start": [0.94, 0.10], "end": [0.62, 0.46]
+    },
+    {
+      "_name": "中部密集块",
+      "type": "block", "rows": 6, "cols": 10,
+      "start": [0.16, 0.40], "spacing": [60, 38]
+    },
+    {
+      "_name": "中下弧形碗",
+      "type": "arc", "count": 22,
+      "center": [0.5, 0.55], "radius": 220,
+      "start_degrees": 192, "end_degrees": 348
+    },
+    {
+      "_name": "左下散布",
+      "type": "stagger",
+      "rows": [0.66, 0.72, 0.78, 0.84, 0.90],
+      "cols": [5, 5, 5, 5, 5],
+      "x_min_ratio": 0.04, "x_max_ratio": 0.38
+    },
+    {
+      "_name": "右下散布",
+      "type": "stagger",
+      "rows": [0.66, 0.72, 0.78, 0.84, 0.90],
+      "cols": [5, 5, 5, 5, 5],
+      "x_min_ratio": 0.62, "x_max_ratio": 0.96
+    },
+    {
+      "_name": "底部漏斗左 — 开口更宽，中槽不再必进",
+      "type": "line", "count": 8,
+      "start": [0.28, 0.68], "end": [0.42, 0.92]
+    },
+    {
+      "_name": "底部漏斗右 — 对称",
+      "type": "line", "count": 8,
+      "start": [0.72, 0.68], "end": [0.58, 0.92]
+    }
+  ],
+  "peg_types": {
+    "normal":  {"color": "#666666", "score": 10,  "disappear": true,  "tags": ["normal"]},
+    "bonus":   {"color": "#ffaa00", "score": 30,  "disappear": true,  "tags": ["bonus", "metal"]},
+    "danger":  {"color": "#cc3333", "score": -5,  "disappear": false, "tags": ["danger"], "speed_penalty": 0.8}
+  },
+  "slots": [
+    {"position": "left",   "x_ratio": 0.15, "y_offset": -36, "width": 132, "height": 32, "effect": "next_round_score_multiplier", "label": "×1.5 下一轮"},
+    {"position": "center", "x_ratio": 0.50, "y_offset": -36, "width": 132, "height": 32, "effect": "score_bonus",                  "label": "+50分"},
+    {"position": "right",  "x_ratio": 0.85, "y_offset": -36, "width": 132, "height": 32, "effect": "ball_recovery",                "label": "回1球"}
+  ]
+}

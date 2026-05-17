@@ -1,0 +1,70 @@
+{
+  "_name": "第3轮 — 中空边密，逼走边路",
+  "_design": "中部大片空白（仅少量 danger），得分 peg 集中在左右两翼和底部弧形。玩家必须精准瞄准边缘才能拿分，中路直落 = 低分 + 吃 danger",
+  "board_width": 1080,
+  "board_height": 1080,
+  "peg_radius": 7,
+  "patterns": [
+    {
+      "_name": "顶部窄弧 — 开口小，球路分叉更极端",
+      "type": "arc", "count": 16,
+      "center": [0.5, 0.05], "radius": 130,
+      "start_degrees": 20, "end_degrees": 160
+    },
+    {
+      "_name": "左翼密集弧",
+      "type": "arc", "count": 24,
+      "center": [0.18, 0.40], "radius": 180,
+      "start_degrees": 280, "end_degrees": 420
+    },
+    {
+      "_name": "右翼密集弧",
+      "type": "arc", "count": 24,
+      "center": [0.82, 0.40], "radius": 180,
+      "start_degrees": 120, "end_degrees": 260
+    },
+    {
+      "_name": "中部稀疏 danger 区（陷阱）",
+      "type": "stagger",
+      "rows": [0.30, 0.40, 0.50, 0.60],
+      "cols": [3, 3, 3, 3],
+      "x_min_ratio": 0.38, "x_max_ratio": 0.62
+    },
+    {
+      "_name": "左下密集散布",
+      "type": "stagger",
+      "rows": [0.62, 0.68, 0.74, 0.80, 0.86, 0.92],
+      "cols": [6, 6, 6, 6, 6, 6],
+      "x_min_ratio": 0.02, "x_max_ratio": 0.42
+    },
+    {
+      "_name": "右下密集散布",
+      "type": "stagger",
+      "rows": [0.62, 0.68, 0.74, 0.80, 0.86, 0.92],
+      "cols": [6, 6, 6, 6, 6, 6],
+      "x_min_ratio": 0.58, "x_max_ratio": 0.98
+    },
+    {
+      "_name": "底部宽弧 — 左右槽引导，中槽极难",
+      "type": "arc", "count": 18,
+      "center": [0.5, 0.82], "radius": 260,
+      "start_degrees": 200, "end_degrees": 340
+    },
+    {
+      "_name": "中槽前方 danger 墙 — 惩罚直落中路",
+      "type": "line", "count": 8,
+      "start": [0.42, 0.88], "end": [0.58, 0.88]
+    }
+  ],
+  "peg_types": {
+    "normal":  {"color": "#666666", "score": 10,  "disappear": true,  "tags": ["normal"]},
+    "bonus":   {"color": "#ffaa00", "score": 30,  "disappear": true,  "tags": ["bonus", "metal"]},
+    "danger":  {"color": "#cc3333", "score": -5,  "disappear": false, "tags": ["danger"], "speed_penalty": 0.8}
+  },
+  "_danger_placement_override": "中部稀疏区 12 颗全部标记为 danger；中槽前方 8 颗也标记为 danger。其余 danger 随机分布在两翼。",
+  "slots": [
+    {"position": "left",   "x_ratio": 0.15, "y_offset": -36, "width": 132, "height": 32, "effect": "next_round_score_multiplier", "label": "×1.5 下一轮"},
+    {"position": "center", "x_ratio": 0.50, "y_offset": -36, "width": 132, "height": 32, "effect": "score_bonus",                  "label": "+50分"},
+    {"position": "right",  "x_ratio": 0.85, "y_offset": -36, "width": 132, "height": 32, "effect": "ball_recovery",                "label": "回1球"}
+  ]
+}

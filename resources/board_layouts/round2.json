@@ -1,0 +1,71 @@
+{
+  "_name": "第2轮 — 左右不对称，强迫调整瞄准",
+  "_design": "左侧密集竖排 + 右侧弧形散布，球路左右手感完全不同；底部左偏障碍让中槽从右侧更难进",
+  "board_width": 1080,
+  "board_height": 1080,
+  "peg_radius": 7,
+  "patterns": [
+    {
+      "_name": "顶部宽弧",
+      "type": "arc", "count": 22,
+      "center": [0.5, 0.06], "radius": 200,
+      "start_degrees": 8, "end_degrees": 172
+    },
+    {
+      "_name": "左侧密集竖排（3列）",
+      "type": "block", "rows": 12, "cols": 4,
+      "start": [0.04, 0.14], "spacing": [52, 44]
+    },
+    {
+      "_name": "右侧大弧",
+      "type": "arc", "count": 20,
+      "center": [0.72, 0.38], "radius": 200,
+      "start_degrees": 220, "end_degrees": 360
+    },
+    {
+      "_name": "右侧小弧",
+      "type": "arc", "count": 14,
+      "center": [0.72, 0.38], "radius": 120,
+      "start_degrees": 200, "end_degrees": 340
+    },
+    {
+      "_name": "中部横向散布",
+      "type": "stagger",
+      "rows": [0.48, 0.52, 0.58, 0.64],
+      "cols": [9, 9, 9, 9],
+      "x_min_ratio": 0.22, "x_max_ratio": 0.92
+    },
+    {
+      "_name": "左下密集块",
+      "type": "block", "rows": 5, "cols": 5,
+      "start": [0.04, 0.68], "spacing": [44, 40]
+    },
+    {
+      "_name": "右下稀疏散布",
+      "type": "stagger",
+      "rows": [0.70, 0.78, 0.86],
+      "cols": [4, 3, 4],
+      "x_min_ratio": 0.55, "x_max_ratio": 0.96
+    },
+    {
+      "_name": "底部左偏障碍 — 阻断右侧直落中槽",
+      "type": "line", "count": 10,
+      "start": [0.32, 0.70], "end": [0.46, 0.94]
+    },
+    {
+      "_name": "底部右侧开放 — 右槽更易进",
+      "type": "line", "count": 6,
+      "start": [0.74, 0.72], "end": [0.64, 0.90]
+    }
+  ],
+  "peg_types": {
+    "normal":  {"color": "#666666", "score": 10,  "disappear": true,  "tags": ["normal"]},
+    "bonus":   {"color": "#ffaa00", "score": 30,  "disappear": true,  "tags": ["bonus", "metal"]},
+    "danger":  {"color": "#cc3333", "score": -5,  "disappear": false, "tags": ["danger"], "speed_penalty": 0.8}
+  },
+  "slots": [
+    {"position": "left",   "x_ratio": 0.15, "y_offset": -36, "width": 132, "height": 32, "effect": "next_round_score_multiplier", "label": "×1.5 下一轮"},
+    {"position": "center", "x_ratio": 0.50, "y_offset": -36, "width": 132, "height": 32, "effect": "score_bonus",                  "label": "+50分"},
+    {"position": "right",  "x_ratio": 0.85, "y_offset": -36, "width": 132, "height": 32, "effect": "ball_recovery",                "label": "回1球"}
+  ]
+}

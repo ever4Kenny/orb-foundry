@@ -2,7 +2,11 @@ extends Node2D
 
 signal pegs_ready
 
-const LAYOUT_PATH := "res://resources/board_layouts/default.json"
+const LAYOUT_PATHS := [
+	"res://resources/board_layouts/round1.json",
+	"res://resources/board_layouts/round2.json",
+	"res://resources/board_layouts/round3.json",
+]
 const PEG_SCRIPT := preload("res://scripts/peg.gd")
 const SLOT_SCRIPT := preload("res://scripts/slot.gd")
 
@@ -15,7 +19,7 @@ var _blood_danger_nodes: Array[Node] = []
 
 func _ready() -> void:
 	randomize()
-	layout = _load_json(LAYOUT_PATH)
+	layout = _load_json(LAYOUT_PATHS[0])
 	RoundManager.round_started.connect(_on_round_started)
 	RoundManager.upgrade_applied.connect(_on_upgrade_applied)
 	queue_redraw()
@@ -282,7 +286,9 @@ func _on_upgrade_applied(upgrade: Dictionary) -> void:
 			ScoreManager.wall_elasticity = float(upgrade.get("elasticity", 1.0))
 		# other types: no peg change needed
 
-func _on_round_started(_round_index: int, _round_data: Dictionary) -> void:
+func _on_round_started(round_index: int, _round_data: Dictionary) -> void:
+	var path := LAYOUT_PATHS[min(round_index, LAYOUT_PATHS.size() - 1)]
+	layout = _load_json(path)
 	reset_pegs_for_round()
 
 func _add_upgrade_pegs(upgrade: Dictionary) -> void:
