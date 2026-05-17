@@ -7,11 +7,56 @@ extends CanvasLayer
 @onready var bag_label: Label = %BagLabel
 @onready var multiplier_label: Label = %MultiplierLabel
 
+# Stage 2: active relic bar (top-left)
+var _relic_bar: HBoxContainer
+const RELIC_EMOJI := {
+	"R1": "🔥", "R2": "💎", "R3": "🎒", "R4": "🧊", "R5": "⚖️", "R6": "🧲"
+}
+
 func _ready() -> void:
 	ScoreManager.score_changed.connect(_on_score_changed)
 	RoundManager.round_started.connect(_on_round_started)
 	BallBag.bag_changed.connect(_on_bag_changed)
+	_build_relic_bar()
+	RelicManager.relic_activated.connect(_on_relic_activated)
+	_rebuild_relic_bar_from_active()
 	_refresh()
+
+func _build_relic_bar() -> void:
+	_relic_bar = HBoxContainer.new()
+	_relic_bar.name = "RelicBar"
+	_relic_bar.position = Vector2(40, 30)
+	_relic_bar.add_theme_constant_override("separation", 12)
+	add_child(_relic_bar)
+
+func _on_relic_activated(relic: Dictionary) -> void:
+	_append_relic_card(relic)
+
+func _rebuild_relic_bar_from_active() -> void:
+	if _relic_bar == null:
+		return
+	for child in _relic_bar.get_children():
+		child.queue_free()
+	for relic in RelicManager.active_relics:
+		_append_relic_card(relic)
+
+func _append_relic_card(relic: Dictionary) -> void:
+	if _relic_bar == null:
+		return
+	var rid := str(relic.get("id", ""))
+	var card := PanelContainer.new()
+	var hb := HBoxContainer.new()
+	hb.add_theme_constant_override("separation", 4)
+	card.add_child(hb)
+	var icon := Label.new()
+	icon.text = str(RELIC_EMOJI.get(rid, "✦"))
+	icon.add_theme_font_size_override("font_size", 18)
+	hb.add_child(icon)
+	var name_label := Label.new()
+	name_label.text = str(relic.get("name", rid))
+	name_label.add_theme_font_size_override("font_size", 14)
+	hb.add_child(name_label)
+	_relic_bar.add_child(card)
 
 func _on_score_changed(_new_score: int, _delta: int) -> void:
 	_refresh()

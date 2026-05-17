@@ -8,6 +8,7 @@ var ball_lookup: Dictionary = {}
 var option_buttons: Array[Button] = []
 var drawn_entries: Array = []
 var bag_label: Label
+var _option_panel: Node
 
 func _ready() -> void:
 	ball_lookup = _load_ball_lookup()
@@ -50,12 +51,21 @@ func _build_panel() -> void:
 	bag_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	panel.add_child(bag_label)
 
-	for i in range(3):
+	# Stage 2: button count is dynamic; managed by _ensure_buttons() inside _draw_options
+	_option_panel = panel
+
+func _ensure_buttons(n: int) -> void:
+	# Grow
+	while option_buttons.size() < n:
 		var button := Button.new()
 		button.custom_minimum_size = Vector2(420, 88)
-		button.pressed.connect(_on_option_pressed.bind(i))
-		panel.add_child(button)
+		var idx := option_buttons.size()
+		button.pressed.connect(_on_option_pressed.bind(idx))
+		_option_panel.add_child(button)
 		option_buttons.append(button)
+	# Shrink: just hide extras (keep node to avoid signal reconnect)
+	for i in range(option_buttons.size()):
+		option_buttons[i].visible = i < n
 
 var _was_visible: bool = false
 
@@ -68,9 +78,13 @@ func _refresh_visibility() -> void:
 
 func _draw_options() -> void:
 	drawn_entries = BallBag.get_all_available()
+	# Stage 2: R3 额外弹仓 — query relic-modified draw count and ensure buttons exist
+	var draw_count: int = RelicManager.get_ball_draw_count() if RelicManager.has_method("get_ball_draw_count") else 3
+	var visible_n: int = min(draw_count, drawn_entries.size())
+	_ensure_buttons(draw_count)
 	for i in range(option_buttons.size()):
 		var button := option_buttons[i]
-		if i >= drawn_entries.size():
+		if i >= visible_n:
 			button.visible = false
 			continue
 		button.visible = true

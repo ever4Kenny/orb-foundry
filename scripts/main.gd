@@ -127,6 +127,7 @@ func _on_round_entry_start_requested() -> void:
 
 func _on_round_started(_round_index: int, _round_data: Dictionary) -> void:
 	_reset_round_tracking()
+	RelicManager.apply_pending_round_start_effects(board)
 
 func _reset_round_tracking() -> void:
 	_round_score_start = ScoreManager.get_score()

@@ -49,8 +49,10 @@ func start_round(ri: int) -> void:
 	var rd = _rounds_data[ri]
 	shots_left = rd.get("ball_count", 4)
 	state = GameState.ROUND_ENTRY
-	round_started.emit(ri, rd)
+	# Dispatch onRoundStart first (fills pending effects list);
+	# main.gd's _on_round_started handler will apply them after board is rebuilt.
 	RelicManager._dispatch("onRoundStart", {"round_index": ri, "round_data": rd})
+	round_started.emit(ri, rd)
 
 func enter_ball_select() -> void:
 	if state == GameState.ROUND_ENTRY:
